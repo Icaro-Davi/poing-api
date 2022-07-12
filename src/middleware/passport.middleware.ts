@@ -16,7 +16,7 @@ const PassportMiddleware = (app: Express) => {
     passport.deserializeUser(async (id: string, done) => {
         try {
             const user = await User.findById(id);
-            if (user) done(null, user);
+            if (user) return done(null, user);
             done(null, null);
         } catch (error) {
             console.error('[APP] Error on passport deserialize.');
