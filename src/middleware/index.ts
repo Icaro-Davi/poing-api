@@ -9,13 +9,13 @@ export class Middleware {
     private static middlewareFolderPath = path.resolve(`${__dirname}`);
 
     static register(middleware: Function, middlewareName: string, priority?: number) {
-        const middlewareItem = { middleware, priority: priority || this.middlewareList.length - 1, name: middlewareName };
-        if (middlewareItem.priority < 1) {
-            !this.middlewareList[0] && (this.middlewareList[0] = []);
-            this.middlewareList[0].push(middlewareItem);
-        } else {
+        !this.middlewareList[0] && (this.middlewareList[0] = []);
+        if (priority) {
+            const middlewareItem = { middleware, priority: priority < 1 ? 1 : priority, name: middlewareName };
             !this.middlewareList[middlewareItem.priority] && (this.middlewareList[middlewareItem.priority] = []);
             this.middlewareList[middlewareItem.priority].push(middlewareItem);
+        } else {
+            this.middlewareList[0].push({ middleware, name: middlewareName });
         }
     }
 
@@ -27,8 +27,8 @@ export class Middleware {
     private static async importAllMiddleware() {
         await this.findMiddlewareFiles()
             .forEach(async mFile => {
-                const { middleware, priority } = (await import(`${this.middlewareFolderPath}/${mFile}`)).default as MiddlewareImportType;
-                this.register(middleware, mFile.split('.')[0], priority);
+                const { middleware, priority, ignore } = (await import(`${this.middlewareFolderPath}/${mFile}`)).default as MiddlewareImportType & { ignore?: boolean };
+                !ignore && this.register(middleware, mFile.split('.')[0], priority);
             });
     }
 
@@ -36,7 +36,8 @@ export class Middleware {
         try {
             console.group('[APP] Middleware List.');
             await this.importAllMiddleware();
-            this.middlewareList.flat().forEach(_ => {
+            const [withoutPriority, ...withPriority] = this.middlewareList;
+            [...withPriority, withoutPriority].flat().forEach(_ => {
                 _.middleware(app);
                 _.priority
                     ? console.log(`- - [Middleware ${_.name}] Loaded with priority ${_.priority}.`)
