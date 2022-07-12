@@ -8,7 +8,7 @@ const ExpressSessionMiddleware = (app: Express) => {
         secret: configs.env.server.SECRET,
         resave: false,
         saveUninitialized: false,
-        cookie: { maxAge: 60000 * 60 * 24},
+        cookie: { maxAge: 60000 * 60 * 24 },
         store: MongoStore.create({
             mongoUrl: configs.env.db.MONGODB_URI
         })
