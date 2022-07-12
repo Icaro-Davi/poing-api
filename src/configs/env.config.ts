@@ -9,7 +9,8 @@ const env = {
     discord: {
         CLIENT_ID: process.env.DISCORD_CLIENT_ID!,
         CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET!,
-        REDIRECT_URL: process.env.DISCORD_REDIRECT_URL!
+        REDIRECT_URL: process.env.DISCORD_REDIRECT_URL!,
+        BOT_TOKEN: process.env.DISCORD_BOT_TOKEN!
     },
     db: {
         MONGODB_URI: process.env.DATABASE_MONGODB_URI!
