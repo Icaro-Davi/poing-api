@@ -1,9 +1,10 @@
 import { Router } from 'express';
-import * as Controller from '../controller/guilds';
+import * as BotController from '../controller/bot';
 import Auth from '../middleware/authenticate.middleware';
 
 const router = Router();
 
-router.get('/', Auth.middleware, Controller.getGuilds);
+router.use(Auth.middleware);
+router.get('/guilds', BotController.getGuilds);
 
 export default router;
