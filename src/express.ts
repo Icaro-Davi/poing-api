@@ -1,7 +1,14 @@
 import express from 'express';
 import configs from './configs';
+import { IUser } from './domain/user/user.schema';
 import Middleware from './middleware';
 import routes from './routes';
+
+declare global {
+    namespace Express {
+        interface User extends IUser { }
+    }
+}
 
 async function StartExpressServer() {
     try {
