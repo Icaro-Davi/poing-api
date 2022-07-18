@@ -4,6 +4,7 @@ import { Strategy } from 'passport-discord';
 
 import User from '../application/user.application';
 import configs from '../configs';
+import BaseError from '../util/error';
 
 const PassportMiddleware = (app: Express) => {
     app.use(passport.initialize());
@@ -19,8 +20,11 @@ const PassportMiddleware = (app: Express) => {
             if (user) return done(null, user);
             done(null, null);
         } catch (error) {
-            console.error('[APP] Error on passport deserialize.');
-            return done(error as any, undefined);
+            return done(new BaseError({
+                log: '[APP] Error on passport deserialize.',
+                methodName: 'deserializeUser',
+                error
+            }), undefined);
         }
     });
 
@@ -38,8 +42,12 @@ const PassportMiddleware = (app: Express) => {
                 const newUser = await User.create({ _id: id, accessToken, refreshToken });
                 if (newUser) return done(null, newUser);
             } catch (error) {
-                console.error('[APP] Error on passport discord strategy.');
-                return done(error as any, undefined);
+                return done(new BaseError({
+                    log: '[APP] Error on passport discord strategy.',
+                    methodName: 'createStrategy',
+                    isOperational: false,
+                    error
+                }), undefined);
             }
         })
     );

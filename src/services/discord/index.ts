@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig, AxiosRequestHeaders } from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import configs from "../../configs";
 
 type AxiosAuthentication = {

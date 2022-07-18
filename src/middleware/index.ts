@@ -1,6 +1,7 @@
 import fs from 'fs';
 import { Express } from 'express';
 import path from 'path';
+import BaseError from '../util/error';
 
 type MiddlewareImportType = { middleware: Function, priority?: number, name: string };
 
@@ -45,8 +46,12 @@ export class Middleware {
             });
             console.groupEnd();
         } catch (error) {
-            console.error('[Middleware] Error on load middleware');
-            throw error;
+            throw new BaseError({
+                log: '[MIDDLEWARE] Error on load middleware',
+                methodName: 'loadAllMiddleware',
+                isOperational: false,
+                error
+            });
         }
     }
 }

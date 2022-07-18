@@ -2,6 +2,10 @@ import { config } from 'dotenv'
 config();
 
 const env = {
+    dev: {
+        logErro: !!process.env.DEV_LOG_ERRORS,
+        printStackError: !!process.env.DEV_LOG_ERRORS_PRINT_STACK
+    },
     server: {
         PORT: process.env.PORT ? parseInt(process.env.PORT) : 8080,
         SECRET: process.env.SECRET!
