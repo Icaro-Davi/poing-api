@@ -1,6 +1,7 @@
 // https://github.com/yaircohendev/nodejs-typescript-starter/blob/main/src/app.ts
 import { AxiosError } from 'axios';
 import status from 'http-status';
+import { MongooseError } from 'mongoose';
 import configs from '../../configs';
 
 interface IBaseError {
@@ -17,7 +18,7 @@ class BaseError extends Error {
     public readonly httpCode: number;
     public readonly isOperational: boolean;
     public readonly methodName?: string;
-    public readonly error?: unknown | any | BaseError;
+    public readonly error?: unknown | any | BaseError | Error;
 
     constructor({ log, message = log, methodName, error, httpCode = status.INTERNAL_SERVER_ERROR, isOperational = true }: IBaseError) {
         if (error instanceof BaseError) throw error;
@@ -37,14 +38,22 @@ class BaseError extends Error {
         this.error = error;
 
         if (error instanceof AxiosError) this.httpCode = error.response?.status || httpCode;
+        else if (error instanceof Error) this.log += ` "Error name: ${error.name}"`;
 
         Error.captureStackTrace(this);
         (configs.env.dev.logErro || this.httpCode === status.INTERNAL_SERVER_ERROR) && this.loggerError();
     }
 
     public loggerError() {
-        console.group(this.log, this.methodName || '');
-        configs.env.dev.printStackError && console.error(this);
+
+        console.group(this.log);
+        console.error('- - Method Name:', this.methodName || 'Unknown');
+        if (configs.env.dev.printStackError) {
+            let { log, methodName, loggerError, ...rest } = this;
+            console.error(rest);
+        } else {
+            console.error('- - Message:', this.message || 'Unknown');
+        }
         console.groupEnd();
     }
 }
