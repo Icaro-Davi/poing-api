@@ -50,7 +50,9 @@ class BaseError extends Error {
         console.error('- - Method Name:', this.methodName || 'Unknown');
         if (configs.env.dev.printStackError) {
             let { log, methodName, loggerError, ...rest } = this;
-            console.error(rest);
+            console.error('- - Http Code:', rest.httpCode);
+            console.error('- - Is Operational:', rest.isOperational);
+            console.error(rest.error);
         } else {
             console.error('- - Message:', this.message || 'Unknown');
         }
