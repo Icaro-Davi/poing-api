@@ -41,11 +41,11 @@ const PassportMiddleware = (app: Express) => {
                 if (user) return done(null, user);
                 const newUser = await User.create({ _id: id, accessToken, refreshToken });
                 if (newUser) return done(null, newUser);
-            } catch (error) {
+            } catch (error: any) {
                 return done(new BaseError({
                     log: '[APP] Error on passport discord strategy.',
-                    methodName: 'createStrategy',
-                    isOperational: false,
+                    methodName: 'new Strategy',
+                    message: error?.message,
                     error
                 }), undefined);
             }

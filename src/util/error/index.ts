@@ -42,10 +42,11 @@ class BaseError extends Error {
 
         Error.captureStackTrace(this);
         (configs.env.dev.logErro || this.httpCode === status.INTERNAL_SERVER_ERROR) && this.loggerError();
+
+        !this.isOperational && process.exit(1);
     }
 
     public loggerError() {
-
         console.group(this.log);
         console.error('- - Method Name:', this.methodName || 'Unknown');
         if (configs.env.dev.printStackError) {
