@@ -1,10 +1,11 @@
 import { DiscordRequestor } from "..";
+import { UserGuildsType } from "./types";
 
 class UserService {
     static basePath = '/users';
 
     static async getGuilds(userAuthToken: string) {
-        return DiscordRequestor.get(`${this.basePath}/@me/guilds`, { userAuthToken });
+        return DiscordRequestor.get<UserGuildsType[]>(`${this.basePath}/@me/guilds`, { userAuthToken });
     }
 
 }
