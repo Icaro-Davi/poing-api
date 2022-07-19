@@ -5,10 +5,11 @@ import configs from '../configs';
 
 const ExpressSessionMiddleware = (app: Express) => {
     app.use(session({
+        name: 'user-session',
         secret: configs.env.server.SECRET,
         resave: false,
         saveUninitialized: false,
-        cookie: { maxAge: 60000 * 60 * 24 },
+        cookie: { maxAge: 60000 * 60 * 24 * configs.env.session.cookieExpirationDays },
         store: MongoStore.create({
             mongoUrl: configs.env.db.MONGODB_URI
         })
