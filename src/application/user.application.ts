@@ -1,10 +1,9 @@
-import { AxiosResponse } from "axios";
+import { AxiosError } from "axios";
 import httpStatus from "http-status";
 
 import { IUser } from "../domain/user/user.schema";
 import UserRepository from "../domain/user/userRepository";
 import BotService from "../services/discord/bot";
-import { BotDetailedGuildType } from "../services/discord/bot/types";
 import UserService from "../services/discord/user";
 import { UserGuildsType } from "../services/discord/user/types";
 import DiscordUtils, { DiscordPermissionsTypes } from "../util/discord";
@@ -88,15 +87,13 @@ class UserApplication {
         try {
             const userGuilds = (await this.getGuilds(userAuthToken))
                 .filter(userGuild => DiscordUtils.hasPermissions(parseInt(userGuild.permissions), ['ADMINISTRATOR', 'MANAGE_GUILD'], { atLeastOne: true }));
-            const Promises: Promise<AxiosResponse<BotDetailedGuildType>>[] = [];
-            userGuilds.forEach(userGuild => Promises.push(BotService.getGuild(userGuild.id)));
-            const guilds = await Promise.allSettled(Promises);
+            const guilds = await Promise.allSettled(userGuilds.map(userGuild => BotService.getGuild(userGuild.id)));
             return guilds.reduce((prev, current) => {
                 if (current.status === 'fulfilled') {
                     const userGuild = userGuilds.find(userGuild => userGuild.id === current.value.data.id);
                     userGuild && prev.push({ ...userGuild, permissions: DiscordUtils.extractPermissions(parseInt(userGuild.permissions)) as DiscordPermissionsTypes[] });
                 } else {
-                    current.reason
+                    if ((current.reason as AxiosError).response?.status !== httpStatus.FORBIDDEN) throw current.reason;
                 }
                 return prev;
             }, [] as (Omit<UserGuildsType, 'permissions'> & { permissions: DiscordPermissionsTypes[] })[]);
