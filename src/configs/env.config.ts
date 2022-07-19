@@ -4,7 +4,7 @@ config();
 const env = {
     dev: {
         logErro: true,
-        printStackError: false
+        printStackError: true
     },
     server: {
         PORT: process.env.PORT ? parseInt(process.env.PORT) : 8080,
@@ -18,6 +18,9 @@ const env = {
     },
     db: {
         MONGODB_URI: process.env.DATABASE_MONGODB_URI!
+    },
+    session: {
+        cookieExpirationDays: 3
     }
 }
 
