@@ -8,7 +8,8 @@ type FuncOptionsType = {
 function hasPermissions(permission: number, permissionsTypes: DiscordPermissionsTypes[] | DiscordPermissionsTypes, options?: FuncOptionsType): boolean {
     const allowedPermissions = extractPermissions(permission);
     if (Array.isArray(permissionsTypes)) {
-        return (options?.atLeastOne ? permissionsTypes.some : permissionsTypes.every)(_permission => !!allowedPermissions.find(allowedPermission => allowedPermission === _permission));
+        const ArrayFunc = (_permission: DiscordPermissionsTypes) => !!allowedPermissions.find(allowedPermission => allowedPermission === _permission);
+        return (options?.atLeastOne ? permissionsTypes.some(ArrayFunc) : permissionsTypes.every(ArrayFunc));
     } else {
         return !!allowedPermissions.some(allowedPermissions => allowedPermissions === permissionsTypes);
     }
