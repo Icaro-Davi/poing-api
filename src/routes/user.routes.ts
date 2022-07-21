@@ -7,6 +7,5 @@ const router = Router();
 
 router.use(auth.middleware);
 router.get('/guilds', useErrorHandler(UserController.guilds));
-router.get('/mutual_guilds', useErrorHandler(UserController.mutualGuilds));
 
 export default router;

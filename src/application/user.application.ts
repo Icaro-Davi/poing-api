@@ -83,25 +83,46 @@ class UserApplication {
         }
     }
 
-    static async getMutualGuilds(userAuthToken: string) {
+    static async getGuildsWithManagePermission(userAuthToken: string): Promise<UserGuildsType[]> {
         try {
             const userGuilds = (await this.getGuilds(userAuthToken))
-                .filter(userGuild => DiscordUtils.hasPermissions(parseInt(userGuild.permissions), ['ADMINISTRATOR', 'MANAGE_GUILD'], { atLeastOne: true }));
-            const guilds = await Promise.allSettled(userGuilds.map(userGuild => BotService.getGuild(userGuild.id)));
-            return guilds.reduce((prev, current) => {
-                if (current.status === 'fulfilled') {
-                    const userGuild = userGuilds.find(userGuild => userGuild.id === current.value.data.id);
-                    userGuild && prev.push({ ...userGuild, permissions: DiscordUtils.extractPermissions(parseInt(userGuild.permissions)) as DiscordPermissionsTypes[] });
-                } else {
-                    if ((current.reason as AxiosError).response?.status !== httpStatus.FORBIDDEN) throw current.reason;
-                }
-                return prev;
-            }, [] as (Omit<UserGuildsType, 'permissions'> & { permissions: DiscordPermissionsTypes[] })[]);
+                .filter(userGuild =>
+                    DiscordUtils.hasPermissions(parseInt(userGuild.permissions as string), ['ADMINISTRATOR', 'MANAGE_GUILD'], { atLeastOne: true })
+                );
+            const promiseResponseGuilds = await Promise
+                .allSettled(
+                    userGuilds.map(userGuild => BotService.getGuild(userGuild.id))
+                );
+            const userGuildsWithBot = promiseResponseGuilds
+                .reduce((prev, current) => {
+                    if (current.status === 'fulfilled') {
+                        const userGuildIndex = userGuilds.findIndex(userGuild => userGuild.id === current.value.data.id);
+                        prev.push({
+                            ...userGuilds[userGuildIndex],
+                            hasBot: true,
+                            permissions: DiscordUtils.extractPermissions(parseInt(userGuilds[userGuildIndex].permissions as string))
+                        });
+                        userGuilds.splice(userGuildIndex, 1);
+                    } else {
+                        if ((current.reason as AxiosError).response?.status !== httpStatus.FORBIDDEN)
+                            throw current.reason;
+                    }
+                    return prev;
+                }, [] as UserGuildsType[]);
+
+            return [
+                ...userGuildsWithBot,
+                ...userGuilds.map(userGuild => ({
+                    ...userGuild,
+                    hasBot: false,
+                    permissions: DiscordUtils.extractPermissions(parseInt(userGuild.permissions as string))
+                }))
+            ]
         } catch (error) {
             throw new BaseError({
                 log: `${LOG_TITTLE} Error on find mutual guilds`,
                 message: 'Cannot find mutual guilds.',
-                methodName: 'getMutuaGuilds',
+                methodName: 'getGuildsWithPermission',
                 httpCode: httpStatus.INTERNAL_SERVER_ERROR,
                 error
             });
