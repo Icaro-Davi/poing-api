@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
+import httpStatus from "http-status";
 
 export async function discord(req: Request, res: Response) {
-    res.sendStatus(200);
+    res.sendStatus(httpStatus.OK);
 }
 
 export async function discordRedirect(req: Request, res: Response) {
@@ -9,5 +10,5 @@ export async function discordRedirect(req: Request, res: Response) {
 }
 
 export async function status(req: Request, res: Response) {
-    res.send(req.user);
+    res.sendStatus(httpStatus.OK);
 }
