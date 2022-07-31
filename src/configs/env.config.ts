@@ -21,6 +21,9 @@ const env = {
     },
     session: {
         cookieExpirationDays: 3
+    },
+    misc: {
+        WEB_APP_REDIRECT_URL: process.env.WEB_APP_REDIRECT_URL!
     }
 }
 
