@@ -1,9 +1,14 @@
 import env from './env.config';
-import connectMongoDB from './database/mongodb.database';
+import type { DatabaseType } from './database';
 
-export default {
-    env,
-    db: {
-        connectMongoDB
-    }
+type ConfigsType = {
+    env: typeof env,
+    db: DatabaseType
 }
+
+const configs: ConfigsType = {
+    env,
+    db: {} as DatabaseType
+}
+
+export default configs;

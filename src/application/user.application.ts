@@ -1,12 +1,12 @@
 import { AxiosError } from "axios";
 import httpStatus from "http-status";
 
-import { IUser } from "../domain/user/user.schema";
-import UserRepository from "../domain/user/userRepository";
+import { IUser } from "../domain/db_poing_dashboard/user/user.schema";
+import UserRepository from "../domain/db_poing_dashboard/user/userRepository";
 import BotService from "../services/discord/bot";
 import UserService from "../services/discord/user";
 import { UserGuildsType } from "../services/discord/user/types";
-import DiscordUtils, { DiscordPermissionsTypes } from "../util/discord";
+import DiscordUtils from "../util/discord";
 import BaseError from "../util/error";
 
 const LOG_TITTLE = '[USER_APPLICATION]';
