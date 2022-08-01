@@ -17,10 +17,11 @@ const env = {
         BOT_TOKEN: process.env.DISCORD_BOT_TOKEN!
     },
     db: {
-        MONGODB_URI: process.env.DATABASE_MONGODB_URI!
+        POING_URI: process.env.DATABASE_MONGODB_POING_URI!,
+        POING_DASHBOARD_URI: process.env.DATABASE_MONGODB_POING_DASHBOARD_URI!
     },
     session: {
-        cookieExpirationDays: 3
+        cookieExpirationDays: 7
     },
     misc: {
         WEB_APP_REDIRECT_URL: process.env.WEB_APP_REDIRECT_URL!

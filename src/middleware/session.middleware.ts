@@ -11,7 +11,7 @@ const ExpressSessionMiddleware = (app: Express) => {
         saveUninitialized: false,
         cookie: { maxAge: 60000 * 60 * 24 * configs.env.session.cookieExpirationDays },
         store: MongoStore.create({
-            mongoUrl: configs.env.db.MONGODB_URI
+            mongoUrl: configs.env.db.POING_DASHBOARD_URI
         })
     }));
 }
