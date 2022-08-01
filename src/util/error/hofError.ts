@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-type ControllerFunctionType = (req: Request, res: Response, next?: NextFunction) => any | void;
+type ControllerFunctionType = (req: Request<any>, res: Response, next?: NextFunction) => any | void;
 
 function useErrorHandler(fn: ControllerFunctionType) {
     return function (req: Request, res: Response, next: NextFunction) {
