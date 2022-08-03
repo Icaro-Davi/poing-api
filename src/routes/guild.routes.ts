@@ -8,6 +8,7 @@ import useErrorHandler from '../util/error/hofError';
 const router = Router();
 
 router.use(Auth.middleware);
+router.get('/', useErrorHandler(GuildController.getGuilds));
 router.get('/:id', schema.getGuildById, useErrorHandler(GuildController.getGuildById));
 
 export default router;
