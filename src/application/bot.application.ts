@@ -1,26 +1,20 @@
 import httpStatus from "http-status";
-import BotService from "../services/discord/bot";
+import BotRepository from "../domain/db_poing/guild/GuildRepository";
 import BaseError from "../util/error";
 
-const LOG_TITTLE = '[BOT_APPLICATION]';
+const LOG_TITLE = '[BOT_APPLICATION]';
 
 class BotApplication {
 
-    static async getGuilds() {
+    static async getGuildById(guildId: string) {
         try {
-            const { data } = await BotService.getGuilds();
-            if (!data) throw new BaseError({
-                log: `${LOG_TITTLE} Guilds not found.`,
-                message: 'Guilds not found',
-                methodName: 'getGuilds',
-                httpCode: httpStatus.NOT_FOUND
-            });
-            return data;
+            const botGuild = await BotRepository.findById(guildId);
+            return botGuild;
         } catch (error) {
             throw new BaseError({
-                log: `${LOG_TITTLE} Error on find guilds`,
-                message: 'Error on try search guilds',
-                methodName: 'getGuilds',
+                log: `${LOG_TITLE} error on get guild`,
+                message: 'Error on search guild by id.',
+                methodName: 'getGuildById',
                 httpCode: httpStatus.INTERNAL_SERVER_ERROR,
                 error
             });
