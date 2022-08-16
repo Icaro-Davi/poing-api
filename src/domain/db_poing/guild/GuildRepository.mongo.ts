@@ -1,4 +1,4 @@
-import mongoose, { ClientSession } from 'mongoose';
+import { ClientSession } from 'mongoose';
 import { Modify } from '../../../util/util.types';
 import { IBotRolesSchema, IBotSchema } from '../bot/Bot.schema';
 import Guild, { IGuildSchema } from './Guild.schema';
@@ -16,8 +16,7 @@ class GuildRepository {
         try {
             return await Guild.create(guild) as IGuildSchema;
         } catch (error) {
-            console.error(error);
-            return false;
+            throw error;
         }
     }
 
@@ -25,17 +24,16 @@ class GuildRepository {
         try {
             return await Guild.findById(guildId).lean();
         } catch (error) {
-            console.error(error);
-            throw new Error('[errorGuildFindById]');
+            throw error;
         }
     }
 
-    static async update(guildId: string, update: mongoose.UpdateQuery<GuildOptionalValues>) {
+    static async update(guildId: string, { bot }: GuildOptionalValues) {
         try {
-            await Guild.findByIdAndUpdate(guildId, update);
+
+            await Guild.findByIdAndUpdate(guildId, { $set: { bot } });
         } catch (error) {
-            console.error(error);
-            throw new Error('[errorGuildUpdate]');
+            throw error;
         }
     }
 
@@ -43,8 +41,7 @@ class GuildRepository {
         try {
             return (await Guild.findById(guildId).select(select))?.toJSON();
         } catch (error) {
-            console.error(error);
-            throw new Error('[errorGuildFindByIdAndOmitValues]');
+            throw error;
         }
     }
 
@@ -52,7 +49,7 @@ class GuildRepository {
         try {
             await Guild.findByIdAndDelete(guildId, session ? { session } : {});
         } catch (error) {
-            throw new Error('[errorGuildDelete]');
+            throw error;
         }
     }
 
