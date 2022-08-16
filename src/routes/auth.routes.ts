@@ -11,5 +11,6 @@ router.get('/discord/redirect', passport.authenticate('discord'), useErrorHandle
 
 router.use(auth.middleware);
 router.get('/status', useErrorHandler(AuthController.status));
+router.get('/logout', useErrorHandler(AuthController.logout));
 
 export default router;

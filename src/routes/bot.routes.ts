@@ -7,6 +7,15 @@ import * as validate from './schemas/bot.routerSchema';
 const router = Router();
 
 router.use(Auth.middleware);
-router.get('/guild/:id', validate.getGuildById, useErrorHandler(BotController.getGuild));
+router.route('/guild/:id')
+    .get(
+        validate.paramGuildById,
+        useErrorHandler(BotController.getGuildSettings)
+    )
+    .post(
+        validate.paramGuildById,
+        validate.bodyGuildSettings,
+        useErrorHandler(BotController.updateGuildSettings)
+    );
 
 export default router;
