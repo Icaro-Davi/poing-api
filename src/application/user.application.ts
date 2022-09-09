@@ -1,13 +1,14 @@
-import { AxiosError } from "axios";
 import httpStatus from "http-status";
 
-import { IUser } from "../domain/db_poing_dashboard/user/user.schema";
 import UserRepository from "../domain/db_poing_dashboard/user/userRepository";
 import BotService from "../services/discord/bot";
 import UserService from "../services/discord/user";
-import { UserGuildsType } from "../services/discord/user/types";
 import DiscordUtils from "../util/discord";
 import BaseError from "../util/error";
+
+import type { AxiosError } from "axios";
+import type { IUser } from "../domain/db_poing_dashboard/user/user.schema";
+import type { UserGuildsType } from "../services/discord/user/types";
 
 const LOG_TITTLE = '[USER_APPLICATION]';
 
@@ -124,6 +125,27 @@ class UserApplication {
                 message: 'Cannot find mutual guilds.',
                 methodName: 'getGuildsWithPermission',
                 httpCode: httpStatus.INTERNAL_SERVER_ERROR,
+                error
+            });
+        }
+    }
+
+    static async getMe(userAuthToken: string){
+        try {
+            const { data } = await UserService.getMe(userAuthToken);
+            if (!data) throw new BaseError({
+                log: `${LOG_TITTLE} user not found.`,
+                message: "Couldn't find user.",
+                httpCode: httpStatus.NOT_FOUND,
+                methodName: 'getMe',
+            });
+            return data;
+        } catch (error) {
+            throw new BaseError({
+                log: `${LOG_TITTLE} Error on get discord user.`,
+                message: 'Cannot get discord user.',
+                methodName: 'getMe',
+                httpCode: httpStatus.NOT_FOUND,
                 error
             });
         }

@@ -5,3 +5,10 @@ export async function guilds(req: Request, res: Response) {
     const guilds = await UserApplication.getGuildsWithManagePermission(req.user!.accessToken);
     res.send(guilds);
 }
+
+export async function me(req: Request, res: Response){
+    console.log('Request')
+    const user = await UserApplication.getMe(req.user!.accessToken);
+    console.log('user', user)
+    res.send(user);
+}
