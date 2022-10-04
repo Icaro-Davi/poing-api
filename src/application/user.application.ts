@@ -130,7 +130,27 @@ class UserApplication {
         }
     }
 
-    static async getMe(userAuthToken: string){
+    static async verifyGuildPermissions(guildId: string, userAuthToken: string) {
+        try {
+            const guilds = await this.getGuilds(userAuthToken);
+            const guild = guilds.find(guild => guild.id === guildId);
+            if (guild) {
+                return DiscordUtils.hasPermissions(parseInt(guild.permissions as string), ["ADMINISTRATOR", "MANAGE_GUILD"], { atLeastOne: true });
+            } else {
+                return false;
+            }
+        } catch (error) {
+            throw new BaseError({
+                log: `${LOG_TITTLE} Failed to check guild permissions`,
+                message: 'Failed on check if user has permission to modify guild.',
+                methodName: 'verifyGuildPermissions',
+                httpCode: httpStatus.INTERNAL_SERVER_ERROR,
+                error
+            });
+        }
+    }
+
+    static async getMe(userAuthToken: string) {
         try {
             const { data } = await UserService.getMe(userAuthToken);
             if (!data) throw new BaseError({
