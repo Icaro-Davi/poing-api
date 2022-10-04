@@ -15,10 +15,13 @@ export interface IBotSchema {
     roles?: IBotRolesSchema;
 }
 
+export const REGEX_BOT_PREFIX = new RegExp('^[!@#$%&*\-_=+.:?/]{1,5}$');
+
 const BotSchema = new mongoose.Schema<IBotSchema>({
     prefix: {
         type: String,
-        min: 1, max: 5
+        min: 1, max: 5,
+        match: REGEX_BOT_PREFIX
     },
     locale: {
         type: String,
