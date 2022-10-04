@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import configs from '../../../configs';
+import App from '../../../configs';
 
 export interface IUser {
     _id: string;
@@ -22,4 +22,4 @@ const UserSchema = new mongoose.Schema<IUser>({
     },
 });
 
-export default configs.db.getConnection('poingDashboard').model('users', UserSchema);
+export default App.db.getConnection('poingDashboard').model('users', UserSchema);
