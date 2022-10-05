@@ -6,9 +6,7 @@ export async function guilds(req: Request, res: Response) {
     res.send(guilds);
 }
 
-export async function me(req: Request, res: Response){
-    console.log('Request')
+export async function me(req: Request, res: Response) {
     const user = await UserApplication.getMe(req.user!.accessToken);
-    console.log('user', user)
     res.send(user);
 }

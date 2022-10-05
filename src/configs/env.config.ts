@@ -18,7 +18,11 @@ const env = {
     },
     db: {
         POING_URI: process.env.DATABASE_MONGODB_POING_URI!,
-        POING_DASHBOARD_URI: process.env.DATABASE_MONGODB_POING_DASHBOARD_URI!
+        POING_DASHBOARD_URI: process.env.DATABASE_MONGODB_POING_DASHBOARD_URI!,
+        REDIS: {
+            host: process.env.REDIS_HOST!,
+            port: parseInt(process.env.REDIS_PORT!)
+        }
     },
     session: {
         cookieExpirationDays: 7

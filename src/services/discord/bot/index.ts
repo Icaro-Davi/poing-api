@@ -7,7 +7,7 @@ class BotService {
     }
 
     static async getGuild(guildId: string) {
-        return DiscordRequestor.get<BotDetailedGuildType>(`/guilds/${guildId}`, { isBot: true })
+        return await DiscordRequestor.get<BotDetailedGuildType>(`/guilds/${guildId}`, { isBot: true })
     }
 }
 
