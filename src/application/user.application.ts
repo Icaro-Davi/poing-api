@@ -3,12 +3,13 @@ import httpStatus from "http-status";
 import UserRepository from "../domain/db_poing_dashboard/user/userRepository";
 import BotService from "../services/discord/bot";
 import UserService from "../services/discord/user";
-import DiscordUtils from "../util/discord";
+import DiscordUtils, { DiscordPermissionsTypes } from "../util/discord";
 import BaseError from "../util/error";
 
 import type { AxiosError } from "axios";
 import type { IUser } from "../domain/db_poing_dashboard/user/user.schema";
 import type { UserGuildsType } from "../services/discord/user/types";
+import AppCache from "../lib/AppCache";
 
 const LOG_TITTLE = '[USER_APPLICATION]';
 
@@ -130,12 +131,15 @@ class UserApplication {
         }
     }
 
-    static async verifyGuildPermissions(guildId: string, userAuthToken: string) {
+    static async verifyGuildPermissions(guildId: string, options: { user: IUser }) {
         try {
-            const guilds = await this.getGuilds(userAuthToken);
+            const guilds = await AppCache.saveAndGetData(
+                AppCache.createKey('GUILDS_USER_ID', options.user._id),
+                async () => await this.getGuilds(options.user.accessToken)
+            );
             const guild = guilds.find(guild => guild.id === guildId);
             if (guild) {
-                return DiscordUtils.hasPermissions(parseInt(guild.permissions as string), ["ADMINISTRATOR", "MANAGE_GUILD"], { atLeastOne: true });
+                return DiscordUtils.hasPermissions(guild.permissions as DiscordPermissionsTypes[], ["ADMINISTRATOR", "MANAGE_GUILD"], { atLeastOne: true });
             } else {
                 return false;
             }
