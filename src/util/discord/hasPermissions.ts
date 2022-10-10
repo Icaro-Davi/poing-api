@@ -5,8 +5,8 @@ type FuncOptionsType = {
     atLeastOne: boolean;
 }
 
-function hasPermissions(permission: number, permissionsTypes: DiscordPermissionsTypes[] | DiscordPermissionsTypes, options?: FuncOptionsType): boolean {
-    const allowedPermissions = extractPermissions(permission);
+function hasPermissions(permission: number | DiscordPermissionsTypes[], permissionsTypes: DiscordPermissionsTypes[] | DiscordPermissionsTypes, options?: FuncOptionsType): boolean {
+    const allowedPermissions = Array.isArray(permission) ? permission : extractPermissions(permission);
     if (Array.isArray(permissionsTypes)) {
         const ArrayFunc = (_permission: DiscordPermissionsTypes) => !!allowedPermissions.find(allowedPermission => allowedPermission === _permission);
         return (options?.atLeastOne ? permissionsTypes.some(ArrayFunc) : permissionsTypes.every(ArrayFunc));
