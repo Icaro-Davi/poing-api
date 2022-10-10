@@ -14,11 +14,16 @@ const env = {
         CLIENT_ID: process.env.DISCORD_CLIENT_ID!,
         CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET!,
         REDIRECT_URL: process.env.DISCORD_REDIRECT_URL!,
-        BOT_TOKEN: process.env.DISCORD_BOT_TOKEN!
+        BOT_TOKEN: process.env.DISCORD_BOT_TOKEN!,
+        queueRequest: {
+            poolSize: 1,
+            delay: 1200
+        }
     },
     db: {
         POING_URI: process.env.DATABASE_MONGODB_POING_URI!,
-        POING_DASHBOARD_URI: process.env.DATABASE_MONGODB_POING_DASHBOARD_URI!
+        POING_DASHBOARD_URI: process.env.DATABASE_MONGODB_POING_DASHBOARD_URI!,
+        REDIS_URI: process.env.DATABASE_REDIS_URI!
     },
     session: {
         cookieExpirationDays: 7

@@ -1,6 +1,7 @@
 import { Connection } from 'mongoose';
 import ConnectPoing from './poing.mongodb.database';
 import ConnectPoingDashboard from "./poing_dashboard.mongodb.database";
+import redisClient from './redis.database';
 
 export enum DBName {
     poing = 'poing',
@@ -33,6 +34,7 @@ async function createDatabase() {
         ConnectPoing(),
         ConnectPoingDashboard()
     ]
+    await redisClient.connect();
     const connections = await Promise.all(connectionPromises);
     return new Database({ poingConnection: connections[0], poingDashboardConnection: connections[1] });
 }
