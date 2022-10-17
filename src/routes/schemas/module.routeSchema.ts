@@ -12,6 +12,12 @@ export const paramId = validator.params(
     })
 );
 
+export const moduleActivity = validator.query(
+    Joi.object().keys({
+        active: Joi.boolean().required(),
+    })
+)
+
 type MessageEmbedType = PickReference<IWelcomeMemberModuleSettings, 'messageEmbed'>;
 const welcomeMember = {
     bodySettings: validator.body(

@@ -67,6 +67,20 @@ class ModuleApplication {
             });
         }
     }
+
+    static async updateWelcomeMemberActivity(guildId: string, isActive: boolean) {
+        try {
+            await WelcomeModuleRepository.updateActivity(guildId, isActive);
+        } catch (error) {
+            throw new BaseError({
+                log: `${LOG_TITLE} Failed to update welcomeMember activity.`,
+                methodName: 'updateWelcomeMemberActivity',
+                httpCode: httpStatus.INTERNAL_SERVER_ERROR,
+                message: 'Error on update WelcomeMember activity',
+                error
+            });
+        }
+    }
 }
 
 export default ModuleApplication;

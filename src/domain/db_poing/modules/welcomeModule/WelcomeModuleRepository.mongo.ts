@@ -45,6 +45,14 @@ class WelcomeModuleRepository {
             throw error;
         }
     }
+
+    static async updateActivity(guildId: string, isActive: boolean) {
+        try {
+            await GuildRepository.updateModuleActivity(guildId, 'welcomeMember', isActive);
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 export default WelcomeModuleRepository;

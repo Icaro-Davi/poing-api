@@ -38,6 +38,14 @@ class GuildRepository {
         }
     }
 
+    static async updateModuleActivity(guildId: string, moduleName: string, isActive: boolean, options?: { session?: ClientSession }) {
+        try {
+            await GuildSchema.findByIdAndUpdate(guildId, { $set: { [`modules.${moduleName}.isActive`]: isActive } }, { session: options?.session });
+        } catch (error) {
+            throw error;
+        }
+    }
+
     static async findByIdAndOmitValues(guildId: string, select: SelectGuildValues) {
         try {
             return (await GuildSchema.findById(guildId).select(select))?.toJSON();

@@ -25,6 +25,11 @@ router.route('/welcome-member/:id')
         VerifyUserCanModifyGuildMiddleware.middleware,
         validate.modules.welcomeMember.bodySettings,
         useErrorHandler(ModuleController.welcomeMember.update)
+    )
+    .patch(
+        validate.moduleActivity,
+        VerifyUserCanModifyGuildMiddleware.middleware,
+        useErrorHandler(ModuleController.welcomeMember.updateActivity)
     );
 
 export default router;

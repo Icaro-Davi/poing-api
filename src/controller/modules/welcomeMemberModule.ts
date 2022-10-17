@@ -27,3 +27,10 @@ export async function update(req: Request<{ id: string }, any, IWelcomeMemberMod
         await ModuleApplication.updateWelcomeMemberSettings((_welcomeModule?.settings as Types.ObjectId), welcomeMember);
     return res.sendStatus(httpStatus.OK);
 }
+
+export async function updateActivity(req: Request<{ id: string }>, res: Response) {
+    const { id: guildId } = req.params;
+    const { active } = req.query as unknown as { active: boolean };
+    await ModuleApplication.updateWelcomeMemberActivity(guildId, active);
+    res.sendStatus(httpStatus.OK);
+}
