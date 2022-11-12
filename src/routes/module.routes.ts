@@ -1,9 +1,10 @@
 import { Router } from 'express';
 import Auth from '../middleware/authenticate.middleware';
 import useErrorHandler from '../util/error/hofError';
-import * as validate from './schemas/module.routeSchema';
+import * as validate from './schemas/modules';
 import * as ModuleController from '../controller/modules';
 import VerifyUserCanModifyGuildMiddleware from '../middleware/verifyUserCanModifyGuild.middleware';
+import verifyUserCanModifyGuildMiddleware from '../middleware/verifyUserCanModifyGuild.middleware';
 
 const router = Router();
 
@@ -17,13 +18,13 @@ router.route('/welcome-member/:id')
     .post(
         validate.paramId,
         VerifyUserCanModifyGuildMiddleware.middleware,
-        validate.modules.welcomeMember.bodySettings,
+        validate.welcomeMember.settingsValidator,
         useErrorHandler(ModuleController.welcomeMember.create)
     )
     .put(
         validate.paramId,
+        validate.welcomeMember.settingsValidator,
         VerifyUserCanModifyGuildMiddleware.middleware,
-        validate.modules.welcomeMember.bodySettings,
         useErrorHandler(ModuleController.welcomeMember.update)
     )
     .patch(
@@ -31,5 +32,12 @@ router.route('/welcome-member/:id')
         VerifyUserCanModifyGuildMiddleware.middleware,
         useErrorHandler(ModuleController.welcomeMember.updateActivity)
     );
+
+router.post('/welcome-member/:id/test-message',
+    validate.paramId,
+    validate.welcomeMember.settingsTestValidator,
+    verifyUserCanModifyGuildMiddleware.middleware,
+    useErrorHandler(ModuleController.welcomeMember.testWelcomeMemberMessage)
+);
 
 export default router;
