@@ -10,6 +10,7 @@ interface IBaseError {
     isOperational?: boolean;
     methodName?: string;
     error?: unknown | any | BaseError;
+    path?: string;
 }
 
 class BaseError extends Error {
@@ -18,9 +19,9 @@ class BaseError extends Error {
     public readonly isOperational: boolean;
     public readonly methodName?: string;
     public readonly error?: unknown | any | BaseError | Error;
+    public readonly path?: string;
 
     constructor({ log, message = log, methodName, error, httpCode = status.INTERNAL_SERVER_ERROR, isOperational = true }: IBaseError) {
-        if (error instanceof BaseError) throw error;
         const errMessage = typeof error === 'string'
             ? error
             : error?.response?.statusText
@@ -28,37 +29,47 @@ class BaseError extends Error {
             || (message as string);
 
         super(errMessage);
-        Object.setPrototypeOf(this, new.target.prototype);
 
         this.log = log;
         this.methodName = methodName;
         this.httpCode = httpCode;
         this.isOperational = isOperational;
         this.error = error;
+        this.path = `(${log.split(' ')[0]}:${methodName})`;
 
-        if (error instanceof AxiosError) this.httpCode = error.response?.status || httpCode;
+        Object.setPrototypeOf(this, new.target.prototype);
+
+        if (error instanceof BaseError) {
+            this.path = `${error.path} ==> ${this.path}`;
+            this.loggerError({ log, error, httpCode, isOperational, message, methodName, path: this.path });
+            throw { ...error, path: this.path };
+        }
+        else if (error instanceof AxiosError) this.httpCode = error.response?.status || httpCode;
         else if (error instanceof Error) this.log += ` "Error name: ${error.name}"`;
 
         Error.captureStackTrace(this);
-        (configs.env.dev.logErro || this.httpCode === status.INTERNAL_SERVER_ERROR) && this.loggerError();
 
+        this.loggerError({ log, error, httpCode, isOperational, message, methodName, path: this.path });
         !this.isOperational && process.exit(1);
     }
 
-    public loggerError() {
-        console.group(this.log);
-        console.error('- - Method Name:', this.methodName || 'Unknown');
-        if (configs.env.dev.printStackError) {
-            let { log, methodName, loggerError, ...rest } = this;
-            console.error('- - Http Code:', rest.httpCode);
-            console.error('- - Is Operational:', rest.isOperational);
-            rest.error && import('util').then(util => {
-                console.error(util.inspect(rest.error, false, null, true));
-            });
-        } else {
-            console.error('- - Message:', this.message || 'Unknown');
+    public loggerError(options: IBaseError) {
+        if (configs.env.dev.logErro || options.httpCode === status.INTERNAL_SERVER_ERROR) {
+            console.group(options.log);
+            console.error('- - Method Name:', options.methodName || 'Unknown');
+            console.error('- - Error Path:', options.path || 'Unknown');
+            if (configs.env.dev.printStackError) {
+                let { log, methodName, ...rest } = options;
+                console.error('- - Http Code:', rest.httpCode);
+                console.error('- - Is Operational:', rest.isOperational);
+                rest.error && import('util').then(util => {
+                    console.error(util.inspect(rest.error, false, null, true));
+                });
+            } else {
+                console.error('- - Message:', options.message || 'Unknown');
+            }
+            console.groupEnd();
         }
-        console.groupEnd();
     }
 }
 

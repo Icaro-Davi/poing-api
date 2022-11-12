@@ -43,6 +43,15 @@ class AppCache {
             throw error;
         }
     }
+
+    static async updateData<R extends { [key: string]: any }>(cachedId: string, data: R) {
+        try {
+            const reference = this.createReference(cachedId);
+            this.save(reference, data);
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 export default AppCache;

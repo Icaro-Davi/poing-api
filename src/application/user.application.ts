@@ -124,7 +124,7 @@ class UserApplication {
             throw new BaseError({
                 log: `${LOG_TITTLE} Error on find mutual guilds`,
                 message: 'Cannot find mutual guilds.',
-                methodName: 'getGuildsWithPermission',
+                methodName: 'getGuildsWithManagePermission',
                 httpCode: httpStatus.INTERNAL_SERVER_ERROR,
                 error
             });
