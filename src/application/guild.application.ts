@@ -41,6 +41,21 @@ class GuildApplication {
             });
         }
     }
+
+    static async getGuildChannels(guildId: string) {
+        try {
+            const { data } = await BotService.getChannels(guildId);
+            return data;
+        } catch (error) {
+            throw new BaseError({
+                log: `${LOG_TITLE} Channels not found`,
+                message: 'Couldn\'t find guild channels',
+                methodName: 'getGuildChannels',
+                httpCode: httpStatus.INTERNAL_SERVER_ERROR,
+                error
+            });
+        }
+    }
 }
 
 export default GuildApplication;

@@ -16,4 +16,10 @@ router.get('/:id',
     useErrorHandler(GuildController.getGuildById)
 );
 
+router.get('/:id/channels',
+    schema.getGuildById,
+    VerifyUserCanModifyGuildMiddleware.middleware,
+    useErrorHandler(GuildController.getChannels)
+);
+
 export default router;
