@@ -134,7 +134,7 @@ class UserApplication {
     static async verifyGuildPermissions(guildId: string, options: { user: IUser }) {
         try {
             const guilds = await AppCache.saveAndGetData(
-                AppCache.createKey('GUILDS_USER_ID', options.user._id),
+                AppCache.createKey('GUILDS_USER_REF', options.user.accessToken),
                 async () => await this.getGuilds(options.user.accessToken)
             );
             const guild = guilds.find(guild => guild.id === guildId);

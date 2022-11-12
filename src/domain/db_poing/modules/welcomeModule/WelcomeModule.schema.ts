@@ -1,6 +1,8 @@
 import mongoose, { Types } from "mongoose";
 import App from '../../../../configs';
 
+import type { PickReference } from "../../../../util/util.types";
+
 export interface IWelcomeMemberModuleSettings {
     _id: Types.ObjectId;
     isMessageText: boolean;
@@ -18,6 +20,8 @@ export interface IWelcomeMemberModuleSettings {
         thumbnail?: string;
     }
 }
+
+export type MessageEmbedType = PickReference<IWelcomeMemberModuleSettings, 'messageEmbed'>;
 
 const WelcomeMemberModuleSettingsSchema = new mongoose.Schema<IWelcomeMemberModuleSettings>({
     isMessageText: {
@@ -54,19 +58,20 @@ const WelcomeMemberModuleSettingsSchema = new mongoose.Schema<IWelcomeMemberModu
             }
         },
         fields: [{
+            _id: false,
             name: {
                 type: String,
-                maxLength: 50
+                maxLength: 100
             },
             value: {
                 type: String,
-                maxLength: 50
+                maxLength: 250
             },
-            inline: Boolean
+            inline: Boolean,
         }],
         footer: {
             type: String,
-            maxLength: 50
+            maxLength: 100
         },
         thumbnail: {
             type: String,
