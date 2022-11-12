@@ -1,7 +1,6 @@
 // https://github.com/yaircohendev/nodejs-typescript-starter/blob/main/src/app.ts
 import { AxiosError } from 'axios';
 import status from 'http-status';
-import { MongooseError } from 'mongoose';
 import configs from '../../configs';
 
 interface IBaseError {
@@ -53,7 +52,9 @@ class BaseError extends Error {
             let { log, methodName, loggerError, ...rest } = this;
             console.error('- - Http Code:', rest.httpCode);
             console.error('- - Is Operational:', rest.isOperational);
-            console.error(rest.error);
+            rest.error && import('util').then(util => {
+                console.error(util.inspect(rest.error, false, null, true));
+            });
         } else {
             console.error('- - Message:', this.message || 'Unknown');
         }
