@@ -1,4 +1,5 @@
 import express from 'express';
+import https from 'https';
 import configs from './configs';
 import createDatabase from './configs/database';
 import { IUser } from './domain/db_poing_dashboard/user/user.schema';
@@ -15,8 +16,14 @@ declare global {
 async function StartExpressServer() {
     try {
         const app = express();
+
         configs.db = await createDatabase();
         await Middleware(app);
+
+        // const httpsServer = https.createServer({
+
+        // }, app);
+
         app.listen(configs.env.server.PORT, () => {
             console.log(`[APP] Running on Port ${configs.env.server.PORT}`);
         });

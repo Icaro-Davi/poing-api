@@ -1,9 +1,12 @@
 import { Express } from 'express';
 import cors from 'cors';
+import configs from '../configs';
 
 const CorsMiddleware = (app: Express) => {
     app.use(cors({
-        origin: ['http://localhost:3000'],
+        origin: configs.env.environment === 'development'
+            ? new RegExp('^https?://localhost(:[\\d]{2,4})?$')
+            : configs.env.server.allowedOrigins,
         credentials: true
     }));
 }

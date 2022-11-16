@@ -2,13 +2,15 @@ import { config } from 'dotenv'
 config();
 
 const env = {
+    environment: (process.env.NODE_ENV ? process.env.NODE_ENV : 'development') as 'development' | 'staging' | 'production',
     dev: {
         logErro: true,
-        printStackError: true
+        printStackError: true,
     },
     server: {
         PORT: process.env.PORT ? parseInt(process.env.PORT) : 8080,
-        SECRET: process.env.SECRET!
+        SECRET: process.env.SECRET!,
+        allowedOrigins: process.env.ALLOWED_ORIGINS?.split(' ')
     },
     discord: {
         CLIENT_ID: process.env.DISCORD_CLIENT_ID!,
