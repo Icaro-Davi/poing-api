@@ -1,5 +1,12 @@
 import { config } from 'dotenv'
+import { IBotSchema } from '../domain/db_poing/bot/Bot.schema';
 config();
+
+const botSettings: IBotSchema = {
+    locale: 'en-US',
+    prefix: '!',
+    messageEmbedHexColor: '#fda5b1'
+}
 
 const env = {
     environment: (process.env.NODE_ENV ? process.env.NODE_ENV : 'development') as 'development' | 'staging' | 'production',
@@ -32,7 +39,8 @@ const env = {
     },
     misc: {
         WEB_APP_REDIRECT_URL: process.env.WEB_APP_REDIRECT_URL!
-    }
+    },
+    botSettings
 }
 
 export default env;
