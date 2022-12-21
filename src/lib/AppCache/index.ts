@@ -28,7 +28,14 @@ class AppCache {
         redisClient.setEx(reference, this.EXPIRATION_TIME, JSON.stringify(data));
     }
 
-    static async saveAndGetData<R = any>(cacheId: string, callback: () => Promise<R>, options?: { expirationTime?: number }): Promise<R> {
+    static async saveAndGetData<R = any>(
+        cacheId: string,
+        callback: () => Promise<R>,
+        options?: {
+            expirationTime?: number,
+            validateData?: (data: R) => boolean
+        },
+    ): Promise<R> {
         try {
             const reference = this.createReference(cacheId);
             const cachedData = await redisClient.get(reference);
@@ -36,6 +43,7 @@ class AppCache {
                 return JSON.parse(cachedData);
             } else {
                 const data = await callback();
+                if (options?.validateData && !options.validateData(data)) return data;
                 redisClient.setEx(reference, options?.expirationTime ?? this.EXPIRATION_TIME, JSON.stringify(data));
                 return data;
             }
