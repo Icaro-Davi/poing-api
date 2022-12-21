@@ -22,7 +22,13 @@ class BotApplication {
                     methodName: 'getGuildById',
                     httpCode: httpStatus.UNAUTHORIZED
                 });
-                const guildSchema = await this.createGuildSettings({ _id: guildId, bot: configs.env.botSettings });
+                const guildSchema = await this.createGuildSettings({
+                    _id: guildId,
+                    bot: configs.env.botSettings,
+                    modules: {
+                        welcomeMember: { isActive: false }
+                    }
+                });
                 return guildSchema;
             }
             return botGuild;
