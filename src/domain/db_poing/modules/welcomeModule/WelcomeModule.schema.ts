@@ -31,7 +31,7 @@ const WelcomeMemberModuleSettingsSchema = new mongoose.Schema<IWelcomeMemberModu
     },
     channelId: {
         type: String,
-        match: /^\d$/g,
+        match: /^\d+$/g,
         max: 50
     },
     messageText: {
