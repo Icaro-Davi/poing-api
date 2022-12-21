@@ -12,8 +12,8 @@ export const welcomeMember = {
             messageText: Joi.string().max(500),
             messageEmbed: Joi.object<MessageEmbedType>({
                 author: Joi.object({
-                    name: Joi.string().max(50),
-                    picture: Joi.string().max(50)
+                    name: Joi.string().allow("").max(50),
+                    picture: Joi.string().allow("").max(50)
                 }),
                 fields: Joi.array().items(
                     Joi.object({
@@ -22,10 +22,10 @@ export const welcomeMember = {
                         inline: Joi.boolean()
                     })
                 ),
-                title: Joi.string().max(100),
-                description: Joi.string().max(500),
-                footer: Joi.string().max(100),
-                thumbnail: Joi.string().max(50),
+                title: Joi.string().allow("").max(100),
+                description: Joi.string().allow("").max(500),
+                footer: Joi.string().allow("").max(100),
+                thumbnail: Joi.string().allow("").max(50),
             })
         })
     ),
@@ -34,23 +34,27 @@ export const welcomeMember = {
             channelId: Joi.string().regex(/^\d+$/).max(50).required(),
             isMessageText: Joi.boolean().required(),
             messageText: Joi.string().max(500),
-            messageEmbed: Joi.object<MessageEmbedType & { color?: string }>({
-                author: Joi.object({
-                    name: Joi.string().max(100),
-                    picture: Joi.string().max(100)
+            messageEmbed: Joi.alternatives().conditional('isMessageText', {
+                is: false,
+                then: Joi.object<MessageEmbedType & { color?: string }>({
+                    author: Joi.object({
+                        name: Joi.string().allow("").max(100),
+                        picture: Joi.string().allow("").max(100)
+                    }),
+                    fields: Joi.array().items(
+                        Joi.object({
+                            name: Joi.string().required().max(100),
+                            value: Joi.string().required().max(150),
+                            inline: Joi.boolean()
+                        })
+                    ),
+                    color: Joi.string().max(7),
+                    title: Joi.string().allow("").max(100),
+                    description: Joi.string().max(500),
+                    footer: Joi.string().allow("").max(100),
+                    thumbnail: Joi.string().max(100),
                 }),
-                fields: Joi.array().items(
-                    Joi.object({
-                        name: Joi.string().required().max(100),
-                        value: Joi.string().required().max(150),
-                        inline: Joi.boolean()
-                    })
-                ),
-                color: Joi.string().max(7),
-                title: Joi.string().max(100),
-                description: Joi.string().max(500),
-                footer: Joi.string().max(100),
-                thumbnail: Joi.string().max(100),
+                otherwise: Joi.any()
             })
         })
     )
