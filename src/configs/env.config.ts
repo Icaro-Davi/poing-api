@@ -12,7 +12,7 @@ const env = {
     environment: (process.env.NODE_ENV ? process.env.NODE_ENV : 'development') as 'development' | 'staging' | 'production',
     dev: {
         logErro: true,
-        printStackError: true,
+        printStackError: false,
     },
     server: {
         PORT: process.env.PORT ? parseInt(process.env.PORT) : 8080,
