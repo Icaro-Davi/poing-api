@@ -87,6 +87,9 @@ class UserApplication {
 
     static async getGuildsWithManagePermission(userAuthToken: string): Promise<UserGuildsType[]> {
         try {
+            const cachedGuilds = await AppCache.get(AppCache.createKey('GUILDS_USER_REF', userAuthToken)) as UserGuildsType[] | undefined;
+            if (cachedGuilds?.length) return cachedGuilds;
+
             const userGuilds = (await this.getGuilds(userAuthToken))
                 .filter(userGuild =>
                     DiscordUtils.hasPermissions(parseInt(userGuild.permissions as string), ['ADMINISTRATOR', 'MANAGE_GUILD'], { atLeastOne: true })
@@ -112,14 +115,12 @@ class UserApplication {
                     return prev;
                 }, [] as UserGuildsType[]);
 
-            return [
-                ...userGuildsWithBot,
-                ...userGuilds.map(userGuild => ({
-                    ...userGuild,
-                    hasBot: false,
-                    permissions: DiscordUtils.extractPermissions(parseInt(userGuild.permissions as string))
-                }))
-            ]
+            await AppCache.saveAndGetData(
+                AppCache.createKey('GUILDS_USER_REF', userAuthToken),
+                async () => userGuildsWithBot
+            );
+
+            return (userGuildsWithBot ?? []);
         } catch (error) {
             throw new BaseError({
                 log: `${LOG_TITTLE} Error on find mutual guilds`,
@@ -133,10 +134,7 @@ class UserApplication {
 
     static async verifyGuildPermissions(guildId: string, options: { user: IUser }) {
         try {
-            const guilds = await AppCache.saveAndGetData(
-                AppCache.createKey('GUILDS_USER_REF', options.user.accessToken),
-                async () => await this.getGuilds(options.user.accessToken)
-            );
+            const guilds = await this.getGuildsWithManagePermission(options.user.accessToken);
             const guild = guilds.find(guild => guild.id === guildId);
             if (guild) {
                 return DiscordUtils.hasPermissions(guild.permissions as DiscordPermissionsTypes[], ["ADMINISTRATOR", "MANAGE_GUILD"], { atLeastOne: true });
