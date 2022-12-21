@@ -42,7 +42,7 @@ class BaseError extends Error {
         if (error instanceof BaseError) {
             this.path = `${error.path} ==> ${this.path}`;
             this.loggerError({ log, error, httpCode, isOperational, message, methodName, path: this.path });
-            throw { ...error, path: this.path };
+            throw { ...error, path: this.path, httpCode: this.httpCode };
         }
         else if (error instanceof AxiosError) this.httpCode = error.response?.status || httpCode;
         else if (error instanceof Error) this.log += ` "Error name: ${error.name}"`;
