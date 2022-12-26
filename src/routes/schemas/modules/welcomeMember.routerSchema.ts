@@ -9,7 +9,7 @@ export const welcomeMember = {
         Joi.object<IWelcomeMemberModuleSettings>({
             channelId: Joi.string().regex(/^\d+$/).max(50),
             isMessageText: Joi.boolean().required(),
-            messageText: Joi.string().max(500),
+            messageText: Joi.string().allow("").max(500),
             messageEmbed: Joi.object<MessageEmbedType>({
                 author: Joi.object({
                     name: Joi.string().allow("").max(50),
@@ -33,7 +33,7 @@ export const welcomeMember = {
         Joi.object<IWelcomeMemberModuleSettings>({
             channelId: Joi.string().regex(/^\d+$/).max(50).required(),
             isMessageText: Joi.boolean().required(),
-            messageText: Joi.string().max(500),
+            messageText: Joi.string().allow("").max(500),
             messageEmbed: Joi.alternatives().conditional('isMessageText', {
                 is: false,
                 then: Joi.object<MessageEmbedType & { color?: string }>({
