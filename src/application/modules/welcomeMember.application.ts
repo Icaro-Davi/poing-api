@@ -89,7 +89,7 @@ export class WelcomeMember {
             const channelId = welcomeMemberSettings.channelId!;
             const isTextMessage = welcomeMemberSettings.isMessageText!;
 
-            const color = parseInt(welcomeMemberSettings.messageEmbed.color.replace('#', '') ?? 'FFFFFF', 16);
+            const color = parseInt(welcomeMemberSettings.botSettings.messageColor.replace('#', '') ?? 'FFFFFF', 16);
             await BotService.sendChannelMessage(channelId, {
                 ...isTextMessage
                     ? { content: welcomeMemberSettings.messageText || '🐔' }
@@ -97,23 +97,23 @@ export class WelcomeMember {
                         embeds: [
                             {
                                 color,
-                                title: welcomeMemberSettings.messageEmbed.title,
-                                description: welcomeMemberSettings.messageEmbed.description,
-                                fields: welcomeMemberSettings.messageEmbed.fields ?? [],
+                                title: welcomeMemberSettings?.messageEmbed?.title,
+                                description: welcomeMemberSettings?.messageEmbed?.description,
+                                fields: welcomeMemberSettings?.messageEmbed?.fields ?? [],
                                 ...welcomeMemberSettings.messageEmbed?.author?.name ? {
                                     author: {
                                         name: welcomeMemberSettings.messageEmbed?.author?.name,
                                         icon_url: welcomeMemberSettings.messageEmbed?.author?.picture
                                     }
                                 } : {},
-                                ...welcomeMemberSettings.messageEmbed.thumbnail ? {
+                                ...welcomeMemberSettings?.messageEmbed?.thumbnail ? {
                                     thumbnail: {
                                         url: welcomeMemberSettings.messageEmbed.thumbnail
                                     },
                                 } : {},
-                                ...welcomeMemberSettings.messageEmbed.footer ? {
+                                ...welcomeMemberSettings?.messageEmbed?.footer ? {
                                     footer: {
-                                        text: welcomeMemberSettings.messageEmbed.footer,
+                                        text: welcomeMemberSettings?.messageEmbed.footer,
                                     },
                                 } : {},
                             }

@@ -3,7 +3,6 @@ import { WelcomeMember, WelcomeMemberSettingsTestType } from "../../application/
 
 import type { Request, Response } from "express";
 import type { IWelcomeMemberModuleSettings } from "../../domain/db_poing/modules/welcomeModule/WelcomeModule.schema";
-import type { Types } from "mongoose";
 
 export async function create(req: Request<{ id: string }, any, IWelcomeMemberModuleSettings>, res: Response) {
     const { id } = req.params;
@@ -22,9 +21,13 @@ export async function getByGuildId(req: Request<{ id: string }>, res: Response) 
 export async function update(req: Request<{ id: string }, any, IWelcomeMemberModuleSettings>, res: Response) {
     const { id } = req.params;
     const welcomeMember = req.body;
-    const _welcomeMember = await WelcomeMember.getWelcomeMemberSettingsByGuildId(id, { populate: false });
-    if (_welcomeMember?.settings)
-        await WelcomeMember.updateWelcomeMemberSettings((_welcomeMember?.settings as Types.ObjectId), welcomeMember);
+    const settings = await WelcomeMember.getWelcomeMemberSettingsByGuildId(id, { populate: true });
+    if (typeof settings !== 'string') {
+        const welcomeMemberSettingsUpdated: IWelcomeMemberModuleSettings = welcomeMember.isMessageText
+            ? { ...settings, messageText: welcomeMember.messageText }
+            : { ...settings, messageEmbed: welcomeMember.messageEmbed };
+        await WelcomeMember.updateWelcomeMemberSettings(settings._id, welcomeMemberSettingsUpdated);
+    }
     return res.sendStatus(httpStatus.OK);
 }
 

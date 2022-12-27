@@ -4,6 +4,7 @@ import type { Modify } from '../../../util/util.types';
 import type { IBotRolesSchema, IBotSchema } from '../bot/Bot.schema';
 import type { IGuildSchema } from './Guild.schema';
 import type { ClientSession, FilterQuery } from 'mongoose';
+import { IWelcomeMemberModuleSettings } from '../modules/welcomeModule/WelcomeModule.schema';
 
 type SelectGuildValues = Partial<{
     _id: 0 | 1,
@@ -77,7 +78,7 @@ class GuildRepository {
                     .findById(guildId)
                     .populate(options?.populate ? "modules.welcomeMember.settings" : '')
                     .select({ modules: 1, _id: 0 })
-            )?.toJSON().modules?.welcomeMember;
+            )?.toJSON().modules?.welcomeMember as IWelcomeMemberModuleSettings | string;
         } catch (error) {
             throw error;
         }

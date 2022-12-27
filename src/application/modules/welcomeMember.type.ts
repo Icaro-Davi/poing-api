@@ -1,3 +1,3 @@
-import { IWelcomeMemberModuleSettings, MessageEmbedType } from "../../domain/db_poing/modules/welcomeModule/WelcomeModule.schema";
+import { IWelcomeMemberModuleSettings } from "../../domain/db_poing/modules/welcomeModule/WelcomeModule.schema";
 
-export type WelcomeMemberSettingsTestType = Omit<IWelcomeMemberModuleSettings, 'messageEmbed'> & { messageEmbed: MessageEmbedType & { color: string; } };
+export type WelcomeMemberSettingsTestType = IWelcomeMemberModuleSettings & { botSettings: { messageColor: string } };
