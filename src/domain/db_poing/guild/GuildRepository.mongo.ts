@@ -1,10 +1,11 @@
 import GuildSchema from './Guild.schema';
+import { IWelcomeMemberModuleSettings } from '../modules/memberWelcomeModule/WelcomeModule.schema';
 
 import type { Modify } from '../../../util/util.types';
 import type { IBotRolesSchema, IBotSchema } from '../bot/Bot.schema';
 import type { IGuildSchema } from './Guild.schema';
 import type { ClientSession, FilterQuery } from 'mongoose';
-import { IWelcomeMemberModuleSettings } from '../modules/welcomeModule/WelcomeModule.schema';
+import type { PickReference } from '../../../util/util.types';
 
 type SelectGuildValues = Partial<{
     _id: 0 | 1,
@@ -12,6 +13,7 @@ type SelectGuildValues = Partial<{
 }>;
 
 type GuildOptionalValues = Partial<Omit<IGuildSchema, 'bot'>> & { bot?: Partial<IBotSchema> };
+type GuildModules = NonNullable<Required<PickReference<IGuildSchema, 'modules'>>>;
 
 class GuildRepository {
 
@@ -39,9 +41,25 @@ class GuildRepository {
         }
     }
 
-    static async updateModuleActivity(guildId: string, moduleName: string, isActive: boolean, options?: { session?: ClientSession }) {
+    private static async updateModuleByObjectPath(guildId: string, modulePath: string, data: any, options?: { session?: ClientSession }) {
         try {
-            await GuildSchema.findByIdAndUpdate(guildId, { $set: { [`modules.${moduleName}.isActive`]: isActive } }, { session: options?.session });
+            await GuildSchema.findByIdAndUpdate(guildId, { $set: { [modulePath]: data } }, { session: options?.session });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async saveNewModule<K extends keyof GuildModules>(guildId: string, moduleName: K, module: GuildModules[K], options?: { session?: ClientSession }) {
+        try {
+            await this.updateModuleByObjectPath(guildId, `modules.${moduleName}`, module, options);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async updateModuleActivity<K extends keyof GuildModules>(guildId: string, moduleName: K, isActive: boolean, options?: { session?: ClientSession }) {
+        try {
+            await this.updateModuleByObjectPath(guildId, `modules.${moduleName}.isActive`, isActive, options);
         } catch (error) {
             throw error;
         }
@@ -71,16 +89,16 @@ class GuildRepository {
         }
     }
 
-    static async getWelcomeModuleSettings(guildId: string, options?: { populate?: boolean }) {
+    static async getModuleSettingsByName<K extends keyof GuildModules>(guildId: string, moduleName: K, options?: { populate?: boolean }){
         try {
             return (
                 await GuildSchema
                     .findById(guildId)
-                    .populate(options?.populate ? "modules.welcomeMember.settings" : '')
+                    .populate(options?.populate ? `modules.${moduleName}.settings` : '')
                     .select({ modules: 1, _id: 0 })
-            )?.toJSON().modules?.welcomeMember as IWelcomeMemberModuleSettings | string;
+            )?.toJSON().modules?.[moduleName] as GuildModules[K];
         } catch (error) {
-            throw error;
+            throw error
         }
     }
 }
