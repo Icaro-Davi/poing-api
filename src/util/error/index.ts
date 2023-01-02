@@ -11,6 +11,7 @@ interface IBaseError {
     methodName?: string;
     error?: unknown | any | BaseError;
     path?: string;
+    logInConsole?: boolean;
 }
 
 class BaseError extends Error {
@@ -21,7 +22,7 @@ class BaseError extends Error {
     public readonly error?: unknown | any | BaseError | Error;
     public readonly path?: string;
 
-    constructor({ log, message = log, methodName, error, httpCode = status.INTERNAL_SERVER_ERROR, isOperational = true }: IBaseError) {
+    constructor({ log, message = log, methodName, error, httpCode = status.INTERNAL_SERVER_ERROR, isOperational = true, logInConsole = true }: IBaseError) {
         const errMessage = typeof error === 'string'
             ? error
             : error?.response?.statusText
@@ -36,20 +37,26 @@ class BaseError extends Error {
         this.isOperational = isOperational;
         this.error = error;
         this.path = `(${log.split(' ')[0]}:${methodName})`;
-
         Object.setPrototypeOf(this, new.target.prototype);
 
         if (error instanceof BaseError) {
             this.path = `${error.path} ==> ${this.path}`;
             this.loggerError({ log, error, httpCode, isOperational, message, methodName, path: this.path });
-            throw { ...error, path: this.path, httpCode: this.httpCode };
+            throw new BaseError({
+                ...error,
+                path: `${error.path} ==> ${this.path}`,
+                httpCode: error.httpCode,
+                message: error.message,
+                logInConsole: false
+            });
         }
+
         else if (error instanceof AxiosError) this.httpCode = error.response?.status || httpCode;
         else if (error instanceof Error) this.log += ` "Error name: ${error.name}"`;
 
         Error.captureStackTrace(this);
 
-        this.loggerError({ log, error, httpCode, isOperational, message, methodName, path: this.path });
+        logInConsole && this.loggerError({ log, error, httpCode, isOperational, message, methodName, path: this.path });
         !this.isOperational && process.exit(1);
     }
 
@@ -58,9 +65,9 @@ class BaseError extends Error {
             console.group(options.log);
             console.error('- - Method Name:', options.methodName || 'Unknown');
             console.error('- - Error Path:', options.path || 'Unknown');
+            console.error('- - Http Code:', options.httpCode);
             if (configs.env.dev.printStackError) {
                 let { log, methodName, ...rest } = options;
-                console.error('- - Http Code:', rest.httpCode);
                 console.error('- - Is Operational:', rest.isOperational);
                 rest.error && import('util').then(util => {
                     console.error(util.inspect(rest.error, false, null, true));
