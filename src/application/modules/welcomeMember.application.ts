@@ -1,32 +1,32 @@
 import httpStatus from "http-status";
-import WelcomeModuleRepository from "../../domain/db_poing/modules/welcomeModule/WelcomeModuleRepository.mongo";
+import WelcomeModuleRepository from "../../domain/db_poing/modules/memberWelcomeModule/WelcomeModuleRepository.mongo";
 import BaseError from "../../util/error";
 import BotApplication from "../bot.application";
 import GuildRepository from "../../domain/db_poing/guild/GuildRepository.mongo";
 import BotService from "../../services/discord/bot";
 
-import type { IWelcomeMemberModuleSettings } from "../../domain/db_poing/modules/welcomeModule/WelcomeModule.schema";
+import type { IWelcomeMemberModuleSettings } from "../../domain/db_poing/modules/memberWelcomeModule/WelcomeModule.schema";
 import type { Types } from "mongoose";
 import type { WelcomeMemberSettingsTestType } from "./welcomeMember.type";
 
-const LOG_TITLE = '[WELCOME MEMBER MODULE APPLICATION]';
+const LOG_TITLE = '[WELCOME_MEMBER_MODULE_APPLICATION]';
 
-export class WelcomeMember {
-    static async getWelcomeMemberSettingsByGuildId(guildId: string, options: { populate: boolean }) {
+export class WelcomeMemberApplication {
+    static async getWelcomeMemberSettingsByGuildId(guildId: string) {
         try {
-            const moduleSettings = await GuildRepository.getWelcomeModuleSettings(guildId, options);
-            if (!moduleSettings)
+            const module = await GuildRepository.getModuleSettingsByName(guildId, 'welcomeMember', { populate: true });
+            if (!module)
                 throw new BaseError({
                     log: `${LOG_TITLE} failed search welcomeMemberSettings by guildId`,
                     methodName: 'getWelcomeMemberSettingsByGuildId',
                     httpCode: httpStatus.NOT_FOUND,
                     message: 'Could\'t find welcome settings module by guild id',
                 });
-            return moduleSettings;
+            return module;
         } catch (error) {
             throw new BaseError({
                 log: `${LOG_TITLE} Error on try find welcome module by guildId`,
-                methodName: 'getWelcomeMemberSettingsById',
+                methodName: 'getWelcomeMemberSettingsByGuildId',
                 httpCode: httpStatus.INTERNAL_SERVER_ERROR,
                 message: 'Error on try find welcome module guild id',
                 error
@@ -49,7 +49,7 @@ export class WelcomeMember {
         } catch (error) {
             throw new BaseError({
                 log: `${LOG_TITLE} Failed to create welcomeMember module.`,
-                methodName: 'getWelcomeMemberSettingsById',
+                methodName: 'createWelcomeMember',
                 httpCode: httpStatus.INTERNAL_SERVER_ERROR,
                 message: 'Error on create WelcomeMember module',
                 error
@@ -62,7 +62,7 @@ export class WelcomeMember {
         } catch (error) {
             throw new BaseError({
                 log: `${LOG_TITLE} Failed to update welcomeMember module.`,
-                methodName: 'getWelcomeMemberSettingsById',
+                methodName: 'updateWelcomeMemberSettings',
                 httpCode: httpStatus.INTERNAL_SERVER_ERROR,
                 message: 'Error on update WelcomeMember module',
                 error

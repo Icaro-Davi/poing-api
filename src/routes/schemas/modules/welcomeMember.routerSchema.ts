@@ -1,6 +1,6 @@
 import Joi from "joi";
 import { createValidator } from "express-joi-validation";
-import { IWelcomeMemberModuleSettings, MessageEmbedType } from "../../../domain/db_poing/modules/welcomeModule/WelcomeModule.schema";
+import { IWelcomeMemberModuleSettings, MessageEmbedType } from "../../../domain/db_poing/modules/memberWelcomeModule/WelcomeModule.schema";
 import { WelcomeMemberSettingsTestType } from "../../../application/module.application";
 
 const validator = createValidator();
@@ -8,6 +8,7 @@ const validator = createValidator();
 export const welcomeMember = {
     settingsValidator: validator.body(
         Joi.object<IWelcomeMemberModuleSettings>({
+            _id: Joi.string().hex().length(24),
             channelId: Joi.string().regex(/^\d+$/).max(50),
             isMessageText: Joi.boolean().required(),
             messageText: Joi.alternatives().conditional('isMessageText', {
@@ -40,6 +41,7 @@ export const welcomeMember = {
     ),
     settingsTestValidator: validator.body(
         Joi.object<WelcomeMemberSettingsTestType>({
+            _id: Joi.string().hex().length(24),
             channelId: Joi.string().regex(/^\d+$/).max(50),
             isMessageText: Joi.boolean().required(),
             messageText: Joi.alternatives().conditional('isMessageText', {

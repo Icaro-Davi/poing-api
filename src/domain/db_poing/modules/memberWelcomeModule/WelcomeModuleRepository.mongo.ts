@@ -11,14 +11,7 @@ class WelcomeModuleRepository {
         try {
             const welcomeMemberSettings = new WelcomeMemberModuleSchema(settings, { session });
             await welcomeMemberSettings.save({ session });
-            await GuildRepository.update(guildId, {
-                modules: {
-                    welcomeMember: {
-                        isActive: true,
-                        settings: welcomeMemberSettings
-                    }
-                }
-            }, { session });
+            await GuildRepository.saveNewModule(guildId, 'welcomeMember', { isActive: true, settings: welcomeMemberSettings }, { session });
             await session.commitTransaction();
         } catch (error) {
             await session.abortTransaction();

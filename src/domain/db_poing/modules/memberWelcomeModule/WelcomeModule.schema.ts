@@ -23,7 +23,7 @@ export interface IWelcomeMemberModuleSettings {
 
 export type MessageEmbedType = PickReference<IWelcomeMemberModuleSettings, 'messageEmbed'>;
 
-const WelcomeMemberModuleSettingsSchema = new mongoose.Schema<IWelcomeMemberModuleSettings>({
+export const WelcomeMemberModule: mongoose.SchemaDefinition<IWelcomeMemberModuleSettings> = {
     isMessageText: {
         type: Boolean,
         required: true,
@@ -78,6 +78,8 @@ const WelcomeMemberModuleSettingsSchema = new mongoose.Schema<IWelcomeMemberModu
             maxLength: 50
         }
     }
-});
+}
+
+const WelcomeMemberModuleSettingsSchema = new mongoose.Schema<IWelcomeMemberModuleSettings>(WelcomeMemberModule);
 
 export default App.db.getConnection('poing').model<IWelcomeMemberModuleSettings>('WelcomeMemberModuleSettings', WelcomeMemberModuleSettingsSchema);
