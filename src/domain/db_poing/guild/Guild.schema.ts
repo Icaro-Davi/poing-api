@@ -3,7 +3,8 @@ import App from '../../../configs';
 import BotSchema from '../bot/Bot.schema';
 
 import type { IBotSchema } from '../bot/Bot.schema';
-import type { IWelcomeMemberModuleSettings } from '../modules/welcomeModule/WelcomeModule.schema';
+import type { IWelcomeMemberModuleSettings } from '../modules/memberWelcomeModule/WelcomeModule.schema';
+import { IMemberLeaveModule } from '../modules/memberLeaveModule/MemberLeaveModule.schema';
 
 type ModuleType<S> = {
     isActive?: boolean;
@@ -15,6 +16,7 @@ export interface IGuildSchema {
     bot: IBotSchema;
     modules?: {
         welcomeMember?: ModuleType<IWelcomeMemberModuleSettings>;
+        memberLeave?: ModuleType<IMemberLeaveModule>;
     }
 }
 
@@ -34,6 +36,17 @@ const GuildSchema = new mongoose.Schema<IGuildSchema>({
             settings: {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: 'WelcomeMemberModuleSettings'
+            }
+        },
+        memberLeave: {
+            isActive: {
+                type: Boolean,
+                default: false,
+                required: true
+            },
+            settings: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'MemberLeaveModule'
             }
         }
     }

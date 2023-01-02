@@ -16,3 +16,4 @@ export const moduleActivity = validator.query(
 )
 
 export * from './welcomeMember.routerSchema';
+export * from './memberLeave.routerSchema';
