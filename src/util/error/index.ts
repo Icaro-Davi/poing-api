@@ -69,9 +69,11 @@ class BaseError extends Error {
             if (configs.env.dev.printStackError) {
                 let { log, methodName, ...rest } = options;
                 console.error('- - Is Operational:', rest.isOperational);
-                rest.error && import('util').then(util => {
-                    console.error(util.inspect(rest.error, false, null, true));
-                });
+                configs.env.dev.printFullStackError
+                    ? rest.error && import('util').then(util => {
+                        console.error(util.inspect(rest.error, false, null, true));
+                    })
+                    : console.error(rest.error);
             } else {
                 console.error('- - Message:', options.message || 'Unknown');
             }

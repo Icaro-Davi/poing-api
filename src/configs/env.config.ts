@@ -13,6 +13,7 @@ const env = {
     dev: {
         logErro: true,
         printStackError: false,
+        printFullStackError: false
     },
     server: {
         PORT: process.env.PORT ? parseInt(process.env.PORT) : 8080,
