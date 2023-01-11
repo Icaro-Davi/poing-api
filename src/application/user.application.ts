@@ -6,7 +6,6 @@ import UserService from "../services/discord/user";
 import DiscordUtils, { DiscordPermissionsTypes } from "../util/discord";
 import BaseError from "../util/error";
 
-import type { AxiosError } from "axios";
 import type { IUser } from "../domain/db_poing_dashboard/user/user.schema";
 import type { UserGuildsType } from "../services/discord/user/types";
 import AppCache from "../lib/AppCache";
@@ -98,6 +97,7 @@ class UserApplication {
                 .allSettled(
                     userGuilds.map(userGuild => BotService.getGuild(userGuild.id))
                 );
+
             const userGuildsWithBot = promiseResponseGuilds
                 .reduce((prev, current) => {
                     if (current.status === 'fulfilled') {
@@ -108,9 +108,6 @@ class UserApplication {
                             permissions: DiscordUtils.extractPermissions(parseInt(userGuilds[userGuildIndex].permissions as string))
                         });
                         userGuilds.splice(userGuildIndex, 1);
-                    } else {
-                        if ((current.reason as AxiosError).response?.status !== httpStatus.FORBIDDEN)
-                            throw current.reason;
                     }
                     return prev;
                 }, [] as UserGuildsType[]);
