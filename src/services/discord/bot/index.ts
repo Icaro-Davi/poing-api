@@ -18,6 +18,10 @@ class BotService {
         }
     }
 
+    static async getChannel(channelId: string) {
+        return DiscordRequestor.get<BotChannel>(`/channels/${channelId}`, { isBot: true });
+    }
+
     static async sendChannelMessage(channelId: string, message: DiscordMessageType) {
         try {
             await DiscordRequestor.post(`/channels/${channelId}/messages`, message, { isBot: true });
