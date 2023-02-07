@@ -2,6 +2,10 @@ import Joi from "joi";
 import { createValidator } from "express-joi-validation";
 import { IWelcomeMemberModuleSettings, MessageEmbedType } from "../../../domain/db_poing/modules/memberWelcomeModule/WelcomeModule.schema";
 import { WelcomeMemberSettingsTestType } from "../../../application/module.application";
+import MessageEmbedSchema from "../defaults/message/Embed";
+import MessageText from "../defaults/message/Text";
+import Snowflake from "../defaults/Snowflake";
+import HexColor from "../defaults/HexColor";
 
 const validator = createValidator();
 
@@ -9,33 +13,16 @@ export const welcomeMember = {
     settingsValidator: validator.body(
         Joi.object<IWelcomeMemberModuleSettings>({
             _id: Joi.string().hex().length(24),
-            channelId: Joi.string().regex(/^\d+$/).max(50),
+            channelId: Snowflake,
             isMessageText: Joi.boolean().required(),
             messageText: Joi.alternatives().conditional('isMessageText', {
                 is: true,
-                then: Joi.string().required().max(500),
+                then: MessageText,
                 otherwise: Joi.forbidden()
             }),
             messageEmbed: Joi.alternatives().conditional('isMessageText', {
                 is: false,
-                then: Joi.object<MessageEmbedType>({
-                    author: Joi.object({
-                        name: Joi.string().allow("").max(100),
-                        picture: Joi.string().allow("").max(100)
-                    }),
-                    fields: Joi.array().items(
-                        Joi.object({
-                            name: Joi.string().required().max(100),
-                            value: Joi.string().required().max(150),
-                            inline: Joi.boolean()
-                        })
-                    ),
-                    title: Joi.string().allow("").max(100),
-                    description: Joi.string().required().max(500),
-                    footer: Joi.string().allow("").max(100),
-                    thumbnail: Joi.string().max(100),
-                }),
-                otherwise: Joi.forbidden()
+                then: MessageEmbedSchema()
             })
         })
     ),
@@ -46,7 +33,7 @@ export const welcomeMember = {
             isMessageText: Joi.boolean().required(),
             messageText: Joi.alternatives().conditional('isMessageText', {
                 is: true,
-                then: Joi.string().required().max(500),
+                then: MessageText,
                 otherwise: Joi.forbidden()
             }),
             botSettings: Joi.object({
@@ -54,24 +41,7 @@ export const welcomeMember = {
             }).required(),
             messageEmbed: Joi.alternatives().conditional('isMessageText', {
                 is: false,
-                then: Joi.object<MessageEmbedType & { color?: string }>({
-                    author: Joi.object({
-                        name: Joi.string().allow("").max(100),
-                        picture: Joi.string().allow("").max(100)
-                    }),
-                    fields: Joi.array().items(
-                        Joi.object({
-                            name: Joi.string().required().max(100),
-                            value: Joi.string().required().max(150),
-                            inline: Joi.boolean()
-                        })
-                    ),
-                    color: Joi.string().max(7),
-                    title: Joi.string().allow("").max(100),
-                    description: Joi.string().required().max(500),
-                    footer: Joi.string().allow("").max(100),
-                    thumbnail: Joi.string().max(100),
-                }),
+                then: MessageEmbedSchema({ color: HexColor }),
                 otherwise: Joi.forbidden()
             })
         })
