@@ -1,4 +1,4 @@
-import { DiscordUser } from '../user/types';
+import type { DiscordUser } from '../user/types';
 
 export type BotGuildType = {
     id: string;
@@ -8,6 +8,21 @@ export type BotGuildType = {
     permissions: string;
     features: string[];
 }
+
+export type GuildRole = {
+    id: string;
+    name: string;
+    permissions: string;
+    position: number;
+    color: number;
+    hoist: boolean;
+    managed: boolean;
+    mentionable: boolean;
+    icon?: any;
+    unicode_emoji?: any;
+    flags: number;
+    tags: { bot_id: string; };
+};
 
 export type BotDetailedGuildType = {
     id: string;
@@ -29,20 +44,7 @@ export type BotDetailedGuildType = {
     widget_enabled: boolean;
     widget_channel_id?: any;
     verification_level: number;
-    roles: {
-        id: string;
-        name: string;
-        permissions: string;
-        position: number;
-        color: number;
-        hoist: boolean;
-        managed: boolean;
-        mentionable: boolean;
-        icon?: any;
-        unicode_emoji?: any;
-        flags: number;
-        tags: { bot_id: string; };
-    }[];
+    roles: GuildRole[];
     default_message_notifications: number;
     mfa_level: number;
     explicit_content_filter: number;
@@ -116,8 +118,54 @@ type Embed = {
     width?: number;
 }
 
-type DiscordMessageComponent = {
 
+type APIPartialEmoji = {
+    id: string | null;
+    name: string | null;
+    animated?: boolean;
+}
+
+/**
+ * @property 1:ActionRow | 2:Button | 3:StringSelect | 4:TextInput | 5:UserSelect | 6:RoleSelect | 7:MentionableSelect | 8:ChannelSelect
+ */
+type ComponentType = 'ACTION_ROW' | 'BUTTON' | 'STRING_SELECT' | 'TEXT_INPUT' | 'USER_SELECT' | 'ROLE_SELECT' | 'MENTIONABLE_SELECT' | 'CHANNEL_SELECT';
+
+export type ComponentButton = {
+    style: string;
+    type: 'BUTTON' | number;
+    custom_id?: string;
+    disabled?: boolean;
+    emoji?: APIPartialEmoji;
+    label?: string;
+    url?: string;
+}
+
+export type MessageSelectOption = {
+    default: boolean;
+    label: string;
+    value: string;
+    description: string | null;
+    emoji: APIPartialEmoji | null;
+}
+
+export type ComponentSelectMenu = {
+    custom_id: string | null;
+    disabled: boolean;
+    max_values: number | null;
+    min_values: number | null;
+    options: MessageSelectOption[];
+    placeholder: string | null;
+    type: 'STRING_SELECT' | 'USER_SELECT' | number;
+}
+
+export type Components = ComponentButton | ComponentSelectMenu;
+
+/**
+ * @property components.style 1:Primary | 2:Secondary | 3:Success | 4:Danger | 5:Link
+ */
+export type DiscordMessageComponent<T = any> = {
+    type: ComponentType | number;
+    components?: (Components & T)[];
 }
 
 type DiscordEmbedMessageType = {
