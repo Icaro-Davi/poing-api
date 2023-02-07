@@ -7,8 +7,8 @@ import DiscordUtils, { DiscordPermissionsTypes } from "../util/discord";
 import BaseError from "../util/error";
 
 import type { IUser } from "../domain/db_poing_dashboard/user/user.schema";
-import type { UserGuildsType } from "../services/discord/user/types";
 import AppCache from "../lib/AppCache";
+import type { UserGuildsType } from "../services/discord/user/types";
 
 const LOG_TITTLE = '[USER_APPLICATION]';
 
@@ -97,14 +97,14 @@ class UserApplication {
                 .allSettled(
                     userGuilds.map(userGuild => BotService.getGuild(userGuild.id))
                 );
-
-            const userGuildsWithBot = promiseResponseGuilds
+                const userGuildsWithBot = promiseResponseGuilds
                 .reduce((prev, current) => {
                     if (current.status === 'fulfilled') {
                         const userGuildIndex = userGuilds.findIndex(userGuild => userGuild.id === current.value.data.id);
                         prev.push({
                             ...userGuilds[userGuildIndex],
                             hasBot: true,
+                            roles: current.value.data.roles,
                             permissions: DiscordUtils.extractPermissions(parseInt(userGuilds[userGuildIndex].permissions as string))
                         });
                         userGuilds.splice(userGuildIndex, 1);
