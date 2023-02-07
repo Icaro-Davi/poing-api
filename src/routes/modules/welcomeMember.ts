@@ -4,7 +4,7 @@ import useErrorHandler from '../../util/error/hofError';
 import * as validate from '../schemas/modules';
 import * as ModuleController from '../../controller/modules';
 import VerifyUserCanModifyGuildMiddleware from '../../middleware/verifyUserCanModifyGuild.middleware';
-import verifyUserCanModifyGuildMiddleware from '../../middleware/verifyUserCanModifyGuild.middleware';
+import verifyAllowedGuildChannelMiddleware from '../../middleware/verifyAllowedGuildChannel.middleware';
 
 const router = Router();
 
@@ -17,14 +17,16 @@ router.route('/welcome-member/:id')
     )
     .post(
         validate.paramId,
-        VerifyUserCanModifyGuildMiddleware.middleware,
         validate.welcomeMember.settingsValidator,
+        VerifyUserCanModifyGuildMiddleware.middleware,
+        verifyAllowedGuildChannelMiddleware.middleware((req) => req.body.channelId),
         useErrorHandler(ModuleController.welcomeMember.create)
     )
     .put(
         validate.paramId,
         validate.welcomeMember.settingsValidator,
         VerifyUserCanModifyGuildMiddleware.middleware,
+        verifyAllowedGuildChannelMiddleware.middleware((req) => req.body.channelId),
         useErrorHandler(ModuleController.welcomeMember.update)
     )
     .patch(
@@ -36,7 +38,8 @@ router.route('/welcome-member/:id')
 router.post('/welcome-member/:id/test-message',
     validate.paramId,
     validate.welcomeMember.settingsTestValidator,
-    verifyUserCanModifyGuildMiddleware.middleware,
+    VerifyUserCanModifyGuildMiddleware.middleware,
+    verifyAllowedGuildChannelMiddleware.middleware((req) => req.body.channelId),
     useErrorHandler(ModuleController.welcomeMember.testWelcomeMemberMessage)
 );
 

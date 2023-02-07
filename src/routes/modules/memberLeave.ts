@@ -6,6 +6,7 @@ import * as ModuleController from '../../controller/modules';
 import Auth from '../../middleware/authenticate.middleware';
 import VerifyUserCanModifyGuild from '../../middleware/verifyUserCanModifyGuild.middleware';
 import useErrorHandler from '../../util/error/hofError';
+import verifyAllowedGuildChannelMiddleware from '../../middleware/verifyAllowedGuildChannel.middleware';
 
 const router = Router();
 
@@ -20,12 +21,14 @@ router.route('/member-leave/:id')
         validate.paramId,
         validate.memberLeave.settingsValidator,
         VerifyUserCanModifyGuild.middleware,
+        verifyAllowedGuildChannelMiddleware.middleware((req) => req.body.channelId),
         useErrorHandler(ModuleController.memberLeave.create)
     )
     .put(
         validate.paramId,
         validate.memberLeave.settingsValidator,
         VerifyUserCanModifyGuild.middleware,
+        verifyAllowedGuildChannelMiddleware.middleware((req) => req.body.channelId),
         useErrorHandler(ModuleController.memberLeave.update)
     )
     .patch(
@@ -38,6 +41,7 @@ router.post('/member-leave/:id/test-message',
     validate.paramId,
     validate.memberLeave.settingsTestValidator,
     VerifyUserCanModifyGuild.middleware,
+    verifyAllowedGuildChannelMiddleware.middleware((req) => req.body.channelId),
     useErrorHandler(ModuleController.memberLeave.testMessage)
 );
 
