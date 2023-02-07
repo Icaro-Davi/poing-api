@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
 import BotService from "../services/discord/bot";
 import { BotChannel } from "../services/discord/bot/types";
+import BaseError from "../util/error";
 
 /**
  * This middleware only works when pass a guild id as param and must a callback that returns a channelId
@@ -31,7 +32,13 @@ function handleCallback(
             if (paramGuildId === channel.guild_id) next();
             else !res.headersSent && res.status(httpStatus.UNAUTHORIZED).send({ err: httpStatus[httpStatus.UNAUTHORIZED] });
         } catch (error) {
-            !res.headersSent && next(error);
+            !res.headersSent && next(new BaseError({
+                message: 'Error on validate channel id',
+                log: 'Probably channelId is undefined',
+                methodName: 'middleware.verifyUserCanModifyGuild',
+                httpCode: httpStatus.INTERNAL_SERVER_ERROR,
+                error
+            }));
         }
     }
     return verifyUserCanModifyGuild
