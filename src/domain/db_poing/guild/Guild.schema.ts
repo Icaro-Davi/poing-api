@@ -17,6 +17,7 @@ export interface IGuildSchema {
     modules?: {
         welcomeMember?: ModuleType<IWelcomeMemberModuleSettings>;
         memberLeave?: ModuleType<IMemberLeaveModule>;
+        roleByInteraction?: { isActive?: boolean; };
     }
 }
 
@@ -47,6 +48,13 @@ const GuildSchema = new mongoose.Schema<IGuildSchema>({
             settings: {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: 'MemberLeaveModule'
+            }
+        },
+        roleByInteraction: {
+            isActive: {
+                type: Boolean,
+                default: false,
+                required: true
             }
         }
     }
