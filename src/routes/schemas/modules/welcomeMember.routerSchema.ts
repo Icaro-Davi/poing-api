@@ -13,7 +13,7 @@ export const welcomeMember = {
     settingsValidator: validator.body(
         Joi.object<IWelcomeMemberModuleSettings>({
             _id: Joi.string().hex().length(24),
-            channelId: Snowflake,
+            channelId: Snowflake.required(),
             isMessageText: Joi.boolean().required(),
             messageText: Joi.alternatives().conditional('isMessageText', {
                 is: true,

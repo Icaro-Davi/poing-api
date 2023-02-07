@@ -21,7 +21,7 @@ const validator = createValidator();
 export const RoleByInteraction = {
     settingsValidator: validator.body(
         Joi.object<RoleByComponentSettingsType>({
-            channelId: Snowflake,
+            channelId: Snowflake.required(),
             isMessageText: Joi.boolean().required(),
             messageText: Joi.alternatives().conditional('isMessageText', {
                 is: true,
