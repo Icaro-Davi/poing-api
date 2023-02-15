@@ -105,6 +105,7 @@ class UserApplication {
                             ...userGuilds[userGuildIndex],
                             hasBot: true,
                             roles: current.value.data.roles,
+                            emojis: current.value.data.emojis,
                             permissions: DiscordUtils.extractPermissions(parseInt(userGuilds[userGuildIndex].permissions as string))
                         });
                         userGuilds.splice(userGuildIndex, 1);

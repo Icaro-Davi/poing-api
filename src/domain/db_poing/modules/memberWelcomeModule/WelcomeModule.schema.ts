@@ -75,7 +75,7 @@ export const WelcomeMemberModule: mongoose.SchemaDefinition<IWelcomeMemberModule
         },
         thumbnail: {
             type: String,
-            maxLength: 50
+            maxLength: 150
         }
     }
 }

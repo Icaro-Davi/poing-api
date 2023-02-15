@@ -1,5 +1,5 @@
 import { DiscordPermissionsTypes } from "../../../util/discord";
-import { GuildRole } from "../bot/types";
+import { GuildEmoji, GuildRole } from "../bot/types";
 
 export type UserGuildsType = {
     id: string;
@@ -7,6 +7,7 @@ export type UserGuildsType = {
     icon: string;
     owner: boolean;
     roles: GuildRole[];
+    emojis: GuildEmoji[];
     permissions: string | DiscordPermissionsTypes[];
     features: string[];
     hasBot?: boolean;

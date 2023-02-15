@@ -24,6 +24,17 @@ export type GuildRole = {
     tags: { bot_id: string; };
 };
 
+export type GuildEmoji = {
+    id: string;
+    name: string;
+    roles: GuildRole[];
+    user?: DiscordUser;
+    require_colons?: boolean;
+    managed?: boolean;
+    animated?: boolean;
+    available?: boolean;
+}
+
 export type BotDetailedGuildType = {
     id: string;
     name: string;
@@ -32,7 +43,7 @@ export type BotDetailedGuildType = {
     splash?: any;
     discovery_splash?: any;
     features: any[];
-    emojis: any[];
+    emojis: GuildEmoji[];
     stickers: any[];
     banner?: any;
     owner_id: string;
