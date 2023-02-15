@@ -21,12 +21,12 @@ export const getByGuildId = async (req: Request<{ id: string }>, res: Response) 
 
 export const update = async (req: Request<{ id: string }, any, IMemberLeaveModule>, res: Response) => {
     const { id } = req.params;
-    const memberLeaveSettings = req.body;
+    const { messageEmbed, messageText, _id, ...memberLeaveSettings } = req.body;
     const settings = (await MemberLeaveApplication.getSettingsByGuildId(id)).settings as IMemberLeaveModule;
     if (typeof settings !== 'string') {
         const welcomeMemberSettingsUpdated: IMemberLeaveModule = memberLeaveSettings.isMessageText
-            ? { ...settings, messageText: memberLeaveSettings.messageText }
-            : { ...settings, messageEmbed: memberLeaveSettings.messageEmbed };
+            ? { ...settings, ...memberLeaveSettings, messageText }
+            : { ...settings, ...memberLeaveSettings, messageEmbed };
         await MemberLeaveApplication.updateSettings(settings?._id, welcomeMemberSettingsUpdated);
         return res.sendStatus(httpStatus.OK);
     }

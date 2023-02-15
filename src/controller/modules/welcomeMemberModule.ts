@@ -20,12 +20,12 @@ export async function getByGuildId(req: Request<{ id: string }>, res: Response) 
 
 export async function update(req: Request<{ id: string }, any, IWelcomeMemberModuleSettings>, res: Response) {
     const { id } = req.params;
-    const welcomeMember = req.body;
+    const { messageEmbed, messageText, _id, ...welcomeMember } = req.body;
     const settings = (await WelcomeMemberApplication.getWelcomeMemberSettingsByGuildId(id)).settings as IWelcomeMemberModuleSettings;
     if (typeof settings !== 'string') {
         const welcomeMemberSettingsUpdated: IWelcomeMemberModuleSettings = welcomeMember.isMessageText
-            ? { ...settings, messageText: welcomeMember.messageText }
-            : { ...settings, messageEmbed: welcomeMember.messageEmbed };
+            ? { ...settings, ...welcomeMember, messageText }
+            : { ...settings, ...welcomeMember, messageEmbed };
         await WelcomeMemberApplication.updateWelcomeMemberSettings(settings?._id, welcomeMemberSettingsUpdated);
         return res.sendStatus(httpStatus.OK);
     }
