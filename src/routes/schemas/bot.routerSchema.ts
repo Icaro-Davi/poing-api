@@ -15,8 +15,11 @@ export const bodyGuildSettings = validator.body(
         prefix: Joi.string().min(1).max(5).regex(REGEX_BOT_PREFIX).required(),
         messageEmbedHexColor: Joi.string().regex(/^#[0-9A-F]{6}$/i),
         locale: Joi.string().valid('pt-BR', 'en-US'),
+        channel: Joi.object({
+            logsId: Joi.string().max(50).allow('')
+        }),
         roles: Joi.object({
-            muteId: Joi.string()
+            muteId: Joi.string().max(50).allow('')
         })
     })
 );

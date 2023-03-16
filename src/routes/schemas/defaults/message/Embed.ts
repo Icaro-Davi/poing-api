@@ -8,8 +8,8 @@ const MessageEmbedSchema = (CustomConfigurations?: { [key: string]: any }) => Jo
     }),
     fields: Joi.array().items(
         Joi.object({
-            name: Joi.string().required().max(100),
-            value: Joi.string().required().max(150),
+            name: Joi.string().required().max(250),
+            value: Joi.string().required().max(1020),
             inline: Joi.boolean()
         })
     ),

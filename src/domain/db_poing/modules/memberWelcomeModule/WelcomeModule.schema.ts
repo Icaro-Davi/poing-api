@@ -61,11 +61,11 @@ export const WelcomeMemberModule: mongoose.SchemaDefinition<IWelcomeMemberModule
             _id: false,
             name: {
                 type: String,
-                maxLength: 100
+                maxLength: 250
             },
             value: {
                 type: String,
-                maxLength: 250
+                maxLength: 1020
             },
             inline: Boolean,
         }],
