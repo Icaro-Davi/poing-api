@@ -9,7 +9,13 @@ const ExpressSessionMiddleware = (app: Express) => {
         secret: configs.env.server.SECRET,
         resave: false,
         saveUninitialized: false,
-        cookie: { maxAge: 60000 * 60 * 24 * configs.env.session.cookieExpirationDays },
+        cookie: {
+            sameSite: 'lax',
+            secure: true,
+            httpOnly: true,
+            maxAge: 60000 * 60 * 24 * configs.env.session.cookieExpirationDays,
+            ...configs.env.session.cookieDomain ? { domain: configs.env.misc.WEB_APP_REDIRECT_URL } : {}
+        },
         store: MongoStore.create({
             mongoUrl: configs.env.db.POING_DASHBOARD_URI
         })
