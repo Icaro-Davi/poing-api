@@ -36,8 +36,11 @@ const env = {
         REDIS_URI: process.env.DATABASE_REDIS_URI!
     },
     session: {
+        cookieExpirationDays: 7,
         cookieDomain: process.env.SESSION_COOKIE_DOMAIN,
-        cookieExpirationDays: 7
+        cookieHttpOnly: Boolean(process.env.SESSION_COOKIE_HTTP_ONLY),
+        secure: Boolean(process.env.SESSION_COOKIE_SECURE),
+        cookieSameSite: (process.env.SESSION_COOKIE_SAME_SITE ?? 'strict') as ('lax' | 'strict' | 'none'),
     },
     misc: {
         WEB_APP_REDIRECT_URL: process.env.WEB_APP_REDIRECT_URL!
