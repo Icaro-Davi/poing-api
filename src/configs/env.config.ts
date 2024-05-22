@@ -18,7 +18,7 @@ const env = {
     server: {
         PORT: process.env.PORT ? parseInt(process.env.PORT) : 8080,
         SECRET: process.env.SECRET!,
-        allowedOrigins: process.env.ALLOWED_ORIGINS?.split(' ')
+        allowedOrigins: process.env.ALLOWED_ORIGINS?.split(' '),
     },
     discord: {
         CLIENT_ID: process.env.DISCORD_CLIENT_ID!,
@@ -36,6 +36,7 @@ const env = {
         REDIS_URI: process.env.DATABASE_REDIS_URI!
     },
     session: {
+        cookieDomain: process.env.SESSION_COOKIE_DOMAIN,
         cookieExpirationDays: 7
     },
     misc: {
