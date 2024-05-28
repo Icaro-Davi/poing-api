@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import jwt from 'jsonwebtoken';
 import httpStatus from "http-status";
 import configs from "../../configs";
 
@@ -7,7 +8,10 @@ export async function discord(req: Request, res: Response) {
 }
 
 export async function discordRedirect(req: Request, res: Response) {
-    res.redirect(configs.env.misc.WEB_APP_REDIRECT_URL);
+    const token = jwt.sign({ sessionID: req.sessionID, userID: req.user?._id }, configs.env.server.SECRET, { expiresIn: `${configs.env.session.cookieExpirationDays}d` });
+    const url = new URL(configs.env.misc.WEB_APP_REDIRECT_URL);
+    url.searchParams.set('user-token', token);
+    res.redirect(url.toString());
 }
 
 export async function status(req: Request, res: Response) {
