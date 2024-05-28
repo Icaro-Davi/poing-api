@@ -2,6 +2,9 @@ import MongoStore from 'connect-mongo';
 import { Express } from 'express';
 import session, { SessionOptions } from 'express-session';
 import configs from '../configs';
+import authenticateStrategyMiddleware from './authenticateStrategy.middleware';
+
+export const sessionStore = MongoStore.create({ mongoUrl: configs.env.db.POING_DASHBOARD_URI });
 
 const ExpressSessionMiddleware = (app: Express) => {
     const sessionConfig: SessionOptions = {
@@ -18,21 +21,9 @@ const ExpressSessionMiddleware = (app: Express) => {
                 domain: configs.env.session.cookieDomain
             } : {}
         },
-        store: MongoStore.create({
-            mongoUrl: configs.env.db.POING_DASHBOARD_URI
-        })
+        store: sessionStore
     }
-    app.use((req, res, next) => {
-        if (configs.env.environment === 'development') {
-            console.log(sessionConfig.cookie);
-            const originalNext = next;
-            next = (function (...arg) {
-                console.log(req.session);
-                originalNext.call(this, ...arg as Parameters<typeof next>);
-            }) as (this: any, ...args: any[]) => void;
-        }
-        session(sessionConfig)(req, res, next);
-    });
+    app.use(authenticateStrategyMiddleware.middleware(session(sessionConfig)));
 }
 
 export default { middleware: ExpressSessionMiddleware, priority: 2 };
