@@ -38,8 +38,8 @@ const env = {
     session: {
         cookieExpirationDays: 7,
         cookieDomain: process.env.SESSION_COOKIE_DOMAIN,
-        cookieHttpOnly: Boolean(process.env.SESSION_COOKIE_HTTP_ONLY),
-        secure: Boolean(process.env.SESSION_COOKIE_SECURE),
+        cookieHttpOnly: Boolean(Number(process.env.SESSION_COOKIE_HTTP_ONLY)),
+        secure: Boolean(Number(process.env.SESSION_COOKIE_SECURE)),
         cookieSameSite: (process.env.SESSION_COOKIE_SAME_SITE ?? 'strict') as ('lax' | 'strict' | 'none'),
     },
     misc: {
