@@ -19,10 +19,17 @@ const authenticationStrategy = (middleware: MiddlewareFnType): MiddlewareFnType 
                     if (err) return res.status(httpStatus.FORBIDDEN).send({ err: httpStatus[httpStatus.FORBIDDEN] });
                     if (typeof payload === 'object') {
                         return sessionStore.get(payload.sessionID, (err, session) => {
-                            if (err || !session) return res.status(httpStatus.FORBIDDEN).send({ err: httpStatus[httpStatus.FORBIDDEN] });
-                            if (payload.userID !== (session as SessionWithPassport).passport.user) return res.status(httpStatus.UNAUTHORIZED).send({ err: httpStatus[httpStatus.UNAUTHORIZED] });
+                            if (err || !session) 
+                                return res.status(httpStatus.FORBIDDEN).send({ err: httpStatus[httpStatus.FORBIDDEN] });
+                            if (payload.userID !== (session as SessionWithPassport).passport.user) 
+                                return res.status(httpStatus.UNAUTHORIZED).send({ err: httpStatus[httpStatus.UNAUTHORIZED] });
                             req.sessionID = payload.sessionID;
-                            req.session = session as typeof req.session;
+                            req.session = {
+                                ...session,
+                                destroy(callback) {
+                                    sessionStore.destroy(req.sessionID, callback);
+                                },
+                            } as typeof req.session;
                             return next();
                         });
                     }
